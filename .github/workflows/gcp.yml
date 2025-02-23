@@ -1,0 +1,96 @@
+name: Build and Deploy to GKE
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: autopilot-cluster-1
+  GKE_ZONE: asia-southeast1-a
+  IMAGE_FE: fe
+  IMAGE_BE: be
+  IMAGE_TAG: latest
+  GAR_ZONE: asia-southeast1
+  GAR_REPO: docker-registry
+  PROMETHEUS_NAMESPACE: monitoring
+  GRAFANA_NAMESPACE: monitoring
+
+jobs:
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+    environment: development
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    # Setup gcloud CLI
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v2.1.7'
+      with:
+        credentials_json: '${{ secrets.GKE_SA_KEY }}'
+
+    # Configure Docker to use the gcloud command-line tool as a credential
+    # helper for authentication
+    - name: Docker configuration
+      run: |-
+        gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://$GAR_ZONE-docker.pkg.dev
+
+    # Get the GKE credentials so we can deploy to the cluster
+    - name: Set up GKE credentials
+      uses: google-github-actions/get-gke-credentials@v2.3.0
+      with:
+        cluster_name: ${{ env.GKE_CLUSTER }}
+        location: ${{ env.GKE_ZONE }}
+
+    # Build the Docker image fe
+    - name: Build
+      run: |-
+        docker build \
+          --tag "$GAR_ZONE-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/$IMAGE_FE:$IMAGE_TAG" \
+          --build-arg GITHUB_SHA="$GITHUB_SHA" \
+          --build-arg GITHUB_REF="$GITHUB_REF" \
+          --build-arg PORT=${{ secrets.PORT }} \
+          -f Dockerfile.fe .
+          
+    # Build the Docker image be
+    - name: Build
+      run: |-
+        docker build \
+          --tag "$GAR_ZONE-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/$IMAGE_BE:$IMAGE_TAG" \
+          --build-arg GITHUB_SHA="$GITHUB_SHA" \
+          --build-arg GITHUB_REF="$GITHUB_REF" \
+          --build-arg SERVER_UPLOAD_URL=${{ secrets.SERVER_UPLOAD_URL }} \
+          --build-arg MONGODB_URI=${{ secrets.MONGODB_URI }} \
+          -f Dockerfile.be .
+    # Scan Docker image with Trivy
+    - name: Trivy
+      run: |-
+        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
+        ./bin/trivy image --severity CRITICAL,HIGH --format json --output trivy-report-fe.json $GAR_ZONE-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/$IMAGE_FE:$IMAGE_TAG
+        ./bin/trivy image --severity CRITICAL,HIGH --format json --output trivy-report-be.json $GAR_ZONE-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/$IMAGE_BE:$IMAGE_TAG
+    #Upload Trivy Scan Report
+    - name: Upload Frontend Trivy Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: trivy-scan-report-frontend
+        path: trivy-report-fe.json
+
+    - name: Upload Backend Trivy Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: trivy-scan-report-backend
+        path: trivy-report-be.json
+    # Push the Docker image to Google Container Registry
+    - name: Publish
+      run: |-
+        docker push "$GAR_ZONE-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/$IMAGE_FE:$IMAGE_TAG"
+        docker push "$GAR_ZONE-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/$IMAGE_BE:$IMAGE_TAG"
+
+    # Deploy the Docker image to the GKE cluster
+    - name: Deploy
+      run: |-
+        kubectl apply -f frontend-deployment.yml -f backend-deployment.yml -f service.yaml -n default
+        kubectl get pods

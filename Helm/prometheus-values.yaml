@@ -1,0 +1,21 @@
+alertmanager:
+  enabled: false
+
+nodeExporter:
+  enabled: false
+  tolerations: []
+
+kubeStateMetrics:
+  podSecurityPolicy:
+    enabled: false
+
+server:
+  securityContext:
+    runAsNonRoot: true
+    fsGroup: 2000
+
+prometheusSpec:
+  securityContext:
+    runAsNonRoot: true
+    fsGroup: 2000
+  tolerations: []

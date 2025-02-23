@@ -1,0 +1,29 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+node_modules/
+/.pnp
+.pnp.js
+*.tfvars
+*tfstate*
+# testing
+/coverage
+*.mp4
+# production
+# /build
+# Exclude Terraform state files
+terraform.tfstate
+key.json
+terraform.tfstate.backup
+.env
+
+# Exclude Terraform lock file (optional)
+.terraform.lock.hcl
+
+# Exclude Terraform working directory
+.terraform/
+# misc
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

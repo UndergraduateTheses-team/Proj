@@ -1,0 +1,28 @@
+FROM node:20-alpine3.20 as BUILD
+
+ARG PORT
+ARG GITHUB_SHA
+ARG GITHUB_REF
+
+ENV PORT=${PORT}
+ENV GITHUB_SHA=${GITHUB_SHA}
+ENV GITHUB_REF=${GITHUB_REF}
+
+
+
+
+WORKDIR /app
+
+# Copy dependency files
+COPY webphim/package*.json ./
+RUN npm install
+COPY webphim .
+RUN npm run build
+
+FROM nginx:alpine
+COPY --from=build /app/build /usr/share/nginx/html
+
+EXPOSE 80
+
+
+CMD ["nginx", "-g", "daemon off;"]
