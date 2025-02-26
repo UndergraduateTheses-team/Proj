@@ -6,6 +6,7 @@ nodeExporter:
   tolerations: []
 
 kubeStateMetrics:
+  enabled: true
   podSecurityPolicy:
     enabled: false
 
@@ -19,3 +20,13 @@ prometheusSpec:
     runAsNonRoot: true
     fsGroup: 2000
   tolerations: []
+  listenLocal: true
+  hostNetwork: false
+  podMonitorSelectorNilUsesHelmValues: false
+  serviceMonitorSelectorNilUsesHelmValues: false
+  serviceMonitorSelector: {}
+  serviceMonitorNamespaceSelector: {}
+  additionalScrapeConfigs:
+    - job_name: 'kubernetes-nodes'
+      static_configs:
+        - targets: ['[::1]:9100']
