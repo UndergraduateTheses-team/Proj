@@ -8,7 +8,6 @@ import { UserContext } from '~/context/authContext.jsx';
 
 function UserDrop() {
     const{id}= useParams();
-    // const { id } = "676ad59658f32858dfdae5bb";
     const { logout } = useLogout();
     const { user } = useContext(UserContext);
     const [userSave, setUserSave] = useState({});
@@ -17,14 +16,10 @@ function UserDrop() {
         avatar: '',
 
     });
-    // ${id}
     useEffect(() => {
         const fetchUserDetail = async () => {
             try {
-                const response = await fetch(`/api/user/user-by-id/${id}`,{
-                    method: 'GET',
-                    credentials: 'include',
-                });
+                const response = await fetch(`/Api/api/user/user-by-id/${id}`);
                 const dataUser = await response.json();
                 if (dataUser.success) {
                     setUserSave(dataUser.data);

@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import fs from "fs";
 import dotenv from 'dotenv';
 dotenv.config();
+
 export const getAllUsers = async (req, res) => {
   try {
     const users = await User.find({}).select("-password");
@@ -49,7 +50,6 @@ export const getUserDetail = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const userId = req.user._id;
-    console.log("userId ? : " + userId);
     let userData = req.body.user ? JSON.parse(req.body.user) : {};
 
     if (req.file) {
@@ -73,7 +73,7 @@ export const updateUser = async (req, res) => {
 
       const existingUser = await User.findById(userId);
       if (existingUser && existingUser.avatar) {
-        const oldFilePath = `/path/to/uploaded/files/${existingUser.avatar.filename}`; //thay the path -> __dirname , ../../../../ServerUpload/upload/ la ok? chua test
+        const oldFilePath = `/path/to/uploaded/files/${existingUser.avatar.filename}`;
         if (fs.existsSync(oldFilePath)) {
           fs.unlinkSync(oldFilePath);
         }

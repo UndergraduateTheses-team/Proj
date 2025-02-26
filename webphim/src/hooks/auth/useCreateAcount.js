@@ -5,9 +5,8 @@ const useCreateAccount = () => {
     const { setUser } = useContext(UserContext);
     const createAccount = async (infor) => {
         try {
-            const response = await fetch('/api/auth/register', {
+            const response = await fetch('/Api/api/auth/register', {
                 method: 'POST',
-                credentials: "include",
                 headers: {
                     'Content-Type': 'application/json',
                 },

@@ -33,7 +33,7 @@ function CreateEpisode() {
 
     return (
         <StyleEpisode>
-            {allowAccess === true ? (
+            {(
                 <>
                     <NavbarAdmin />
                     <div className="formContainer">
@@ -63,8 +63,6 @@ function CreateEpisode() {
                     </div>
                     <Footer />
                 </>
-            ) : (
-                <DenyAccess />
             )}
         </StyleEpisode>
     );

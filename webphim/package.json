@@ -2,6 +2,7 @@
     "name": "webphim",
     "version": "0.1.0",
     "private": true,
+    "proxy": "http://localhost:8089",
     "homepage": "http://localhost:3009",
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^6.1.0",

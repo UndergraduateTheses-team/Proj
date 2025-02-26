@@ -29,7 +29,7 @@ import ChangePass from './pages/auth/changePass';
 
 function App() {
     const { allowAccess } = useContext(UserContext);
-    // useGetAccess();
+    useGetAccess();
     const { user } = useContext(UserContext);
 
     return (

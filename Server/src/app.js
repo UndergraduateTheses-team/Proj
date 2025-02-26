@@ -7,8 +7,6 @@ import { fileURLToPath } from "url";
 import cookieParser from "cookie-parser";
 import dotenv from 'dotenv';
 dotenv.config();
-import upload from "./configs/multerConfig.js";
-import uploadController from "./controllers/UploadController.js"
 
 const app = express();
 
@@ -18,7 +16,7 @@ app.use((req, res, next) => {
   res.setHeader(
     "Content-Security-Policy",
     `default-src 'self' blob: http://${process.env.SERVER_UPLOAD_URL}; ` +
-    "script-src 'self' https://unpkg.com; " + 
+    "script-src 'self' https://unpkg.com http://localhost:8090; " + 
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com/; " + 
     `img-src 'self' data: http://${process.env.SERVER_UPLOAD_URL}; ` +
     `media-src 'self' blob: * data: http://${process.env.SERVER_UPLOAD_URL}; ` +
@@ -36,18 +34,19 @@ app.use(cors({
 }));
 
 app.use(cookieParser());
-app.post("/uploads", upload.single("file"), uploadController);
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-app.use(
-  express.static(path.resolve(__dirname, "../build"), {
-    setHeaders: (res, path) => {
-      res.removeHeader("Content-Security-Policy");
-    },
-  })
-);
-app.use(express.static(path.resolve(__dirname, "../static")));
-console.log("thu muc hien tai: ", __dirname);
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// app.use(
+//   express.static(path.resolve(__dirname, "../build"), {
+//     setHeaders: (res, path) => {
+//       res.removeHeader("Content-Security-Policy");
+//     },
+//   })
+// );
+// app.use(express.static(path.resolve(__dirname, "../static")));
+
+console.log("thu muc hien tai: ", __dirname);
 app.use("/api", router);
 app.get("*", (req, res) => {
   res.sendFile(path.resolve(__dirname, "../build/index.html"));
@@ -57,16 +56,6 @@ mongoose.connect(`${process.env.MONGODB_URI}`)
           console.log("Connect to db success");
               })
         .catch(err => console.error("Failed to connect to DB:", err));
-app.listen(8089, () => {
+app.listen(process.env.PORT, () => {
   console.log("Server is running 8089 port");
 });
-
-
-
-
-
-
-//   res.setHeader(
-//     "Content-Security-Policy-Report-Only",
-//     "default-src 'self' blob: http://35.240.234.86:8090; img-src 'self' data: http://35.240.234.86:8090;"
-// );

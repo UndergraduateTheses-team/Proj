@@ -6,12 +6,11 @@ const useGetEpisodeOfFilm = (movieId) => {
 
     useEffect(() => {
         const getEpisodeInfor = async () => {
-            const response = await fetch(`/api/episode/${movieId}`,{
-                credentials: "include",
-            });
+            const response = await fetch(`/Api/api/episode/${movieId}`);
             const data = await response.json();
             if (response.ok) {
                 setEpisodeList(data.data);
+                console.log(data.data);
                 setCurrentEpisode(data.data[0]);
             } else {
                 console.log(data.message);

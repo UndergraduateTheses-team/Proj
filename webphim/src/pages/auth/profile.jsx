@@ -10,7 +10,6 @@ import useLogout from '~/hooks/auth/useLogoutAcount';
 
 function Profile() {
     const { id } = useParams();
-    // const { id } = "676ad59658f32858dfdae5bb";
     const [user, setUser] = useState({});
     const { logout } = useLogout();
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
@@ -44,13 +43,7 @@ function Profile() {
     useEffect(() => {
         const fetchUserDetail = async () => {
             try {
-                const response = await fetch(`/api/user/user-by-id/${id}`,{
-                    method: 'GET',
-                    credentials: 'include',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
+                const response = await fetch(`/Api/api/user/user-by-id/${id}`);
                 const dataUser = await response.json();
                 if (dataUser.success) {
                     setUser(dataUser.data);
@@ -81,7 +74,7 @@ function Profile() {
                 <div className="content-wrapper">
                     <div className="wrapper">
                         <form className="formUser" onSubmit={handleSubmit}>
-                            <h4 className="header">Thông Tin Cá Nhân</h4>
+                            <h4 className="headerr">Thông Tin Cá Nhân</h4>
                             <div className="container">
                                 <div className="info">
                                     <h4 className="title">Thông tin người dùng</h4>

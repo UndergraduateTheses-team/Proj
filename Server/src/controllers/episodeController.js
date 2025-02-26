@@ -3,6 +3,7 @@ import episodeSchema from "../validations/episodeValid.js";
 import fs from "fs";
 import dotenv from 'dotenv';
 dotenv.config();
+
 export const getAllEpisodes = async (req, res) => {
   const { movieId } = req.params; // Lấy movieId từ params
 
