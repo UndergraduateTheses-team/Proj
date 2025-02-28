@@ -8,6 +8,7 @@ const useGetFilmByGenreId = (id) => {
         const getFilms = async () => {
             const response = await fetch('/Api/api/films/get-film-by-genre', {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },

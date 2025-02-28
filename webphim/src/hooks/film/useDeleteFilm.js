@@ -3,6 +3,7 @@ const useDeleteFilm = () => {
         try {
             const response = await fetch(`/Api/api/films/${movieId}`, {
                 method: 'DELETE',
+                credentials: 'include',
             });
             const data = await response.json();
             if (response.ok) {

@@ -6,6 +6,7 @@ const useUpdateFilm = (id) => {
             formData.append('film', JSON.stringify(filmInfor));
             const response = await fetch(`/Api/api/films/update/${id}`, {
                 method: 'POST',
+                credentials: 'include',
                 body: formData,
             });
             console.log(filmInfor);

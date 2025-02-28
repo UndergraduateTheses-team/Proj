@@ -26,6 +26,7 @@ function useComment(movieId) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include',
                 body: JSON.stringify(comment),
             });
             const data = await response.json();

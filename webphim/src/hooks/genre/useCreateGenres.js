@@ -8,6 +8,7 @@ const useCreateGenres = () => {
             setLoading(true);
             const response = await fetch('/Api/api/genres/', {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },

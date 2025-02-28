@@ -6,6 +6,7 @@ const useSearchFilm = (name) => {
         const searchFilms = async () => {
             const response = await fetch('/Api/api/films/search-film', {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },

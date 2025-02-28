@@ -3,6 +3,7 @@ function useFollowFilm() {
     const FollowFilm = async (id) => {
         const response = await fetch('/Api/api/films/follow', {
             method: 'POST',
+            credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ movieId: id }),
         });

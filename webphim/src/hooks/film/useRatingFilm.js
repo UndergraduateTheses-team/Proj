@@ -6,6 +6,7 @@ function useRatingFilm(movieId) {
         const getRate = async () => {
             const response = await fetch('/Api/api/films/getRate', {
                 method: 'POST',
+                credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ movieId }),
             });
@@ -22,6 +23,7 @@ function useRatingFilm(movieId) {
     const RatingFilm = async (movieId, rate) => {
         const response = await fetch('/Api/api/films/rating', {
             method: 'POST',
+            credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ movieId, star: rate }),
         });

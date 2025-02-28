@@ -7,6 +7,7 @@ const useCreateFilm = () => {
             formData.append('film', JSON.stringify(filmInfor));
             const response = await fetch('/Api/api/films/create/', {
                 method: 'POST',
+                credentials: 'include',
                 body: formData,
             });
             const data = await response.json();
