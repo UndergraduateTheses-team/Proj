@@ -13,8 +13,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
       
-      - name: Setup NodeJs
+      - name: Setup Node.js
         uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
       - name: Set up Minikube
         uses: medyagh/setup-minikube@latest
@@ -42,14 +44,10 @@ jobs:
 
       - name: Upgrade Vulnerable Dependencies
         run: |
-          npm install mongoose@8.9.5
-          npm install express@4.20.0
-          npm install axios@1.7.4
-          npm install http-proxy-middleware@3.0.3
-          npm install @testing-library/jest-dom@6.0.0
-          npm install cross-spawn@7.0.5
-          npm install nth-check@2.0.1
-          npm install ws@8.17.1
+          npm install mongoose@8.9.5 express@4.20.0 axios@1.7.4 \
+            http-proxy-middleware@3.0.3 @testing-library/jest-dom@6.0.0 \
+            cross-spawn@7.0.5 nth-check@2.0.1 ws@8.17.1
+          npm audit fix --force  # Ensures all vulnerabilities are patched
 
       - name: Install Snyk CLI
         run: npm install -g snyk
@@ -77,7 +75,7 @@ jobs:
 
       - name: Restart Grafana
         run: |
-          kubectl delete pod -n monitoring -l app.kubernetes.io/name=grafana
+          kubectl rollout restart deployment -n monitoring prometheus-grafana
 
       - name: Verify Deployment
         run: kubectl get pods -n monitoring
