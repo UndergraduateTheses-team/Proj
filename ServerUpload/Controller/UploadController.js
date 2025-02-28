@@ -7,7 +7,7 @@ const uploadFile = (req, res) => {
     if (file) {
       console.log("is it working?");
       const filePath =
-        `http://${process.env.SERVER_URL}/` +
+        `http://${process.env.ITSELF_IP}:8090/` +
         req.file.path.substring(req.file.path.indexOf("uploads"));
       return res.status(201).json(filePath);
     } else {

@@ -15,11 +15,11 @@ app.use(express.json());
 app.use((req, res, next) => {
   res.setHeader(
     "Content-Security-Policy",
-    `default-src 'self' blob: http://${process.env.SERVER_UPLOAD_URL}; ` +
+    `default-src 'self' blob: http://${process.env.SERVER_UPLOAD_IP}:8090; ` +
     "script-src 'self' https://unpkg.com http://localhost:8090; " + 
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com/; " + 
-    `img-src 'self' data: http://${process.env.SERVER_UPLOAD_URL}; ` +
-    `media-src 'self' blob: * data: http://${process.env.SERVER_UPLOAD_URL}; ` +
+    `img-src 'self' data: http://${process.env.SERVER_UPLOAD_IP}:8090; ` +
+    `media-src 'self' blob: * data: http://${process.env.SERVER_UPLOAD_IP}:8090; ` +
     "worker-src 'self' blob: *;" +
     "font-src 'self' data: https://fonts.gstatic.com;"
   );

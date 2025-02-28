@@ -27,7 +27,7 @@ dotenv.config();
 
       const user = await User.create({
         ...req.body,
-        avatar: `http://${process.env.SERVER_UPLOAD_URL}/uploads/avatar/avatar.png`,
+        avatar: `http://${process.env.SERVER_UPLOAD_IP}:8090/uploads/avatar/avatar.png`,
         password: hashNewPassword,
       });
       user.password = undefined;
