@@ -7,6 +7,7 @@ const useGetAccess = () => {
         const getAccess = async () => {
             const response = await fetch('/Api/api/auth/getAccess/', {
                 method: 'POST',
+                credentials:'include',
                 headers: { 'Content-Type': 'application/json' },
             });
             const data = await response.json();
