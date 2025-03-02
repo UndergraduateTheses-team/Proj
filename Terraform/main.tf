@@ -17,6 +17,8 @@ resource "google_compute_instance" "fe" {
   machine_type = "e2-micro"       # You can adjust the machine type as needed
   zone         = "us-central1-c"
 
+
+
   boot_disk {
     initialize_params {
       image = "https://www.googleapis.com/compute/v1/projects/debian-cloud/global/images/debian-12-bookworm-v20250212"
@@ -31,10 +33,20 @@ resource "google_compute_instance" "fe" {
         stack_type                  = "IPV4_IPV6"
         subnetwork                  = "https://www.googleapis.com/compute/v1/projects/lexical-aquifer-445708-u1/regions/us-central1/subnetworks/public-subnet"
         subnetwork_project          = "lexical-aquifer-445708-u1"
-        # access_config {
-        #     nat_ip       = 
-        #      network_tier = 
-        # }
+        
+        access_config {
+            nat_ip                 = "35.209.83.196"
+            network_tier           = "STANDARD"
+
+            }
+
+        ipv6_access_config {
+            external_ipv6               = "2600:1900:4000:a7e:0:1:0:0"
+            external_ipv6_prefix_length = "96"
+            name                        = "external-ipv6"
+            network_tier                = "PREMIUM"
+            
+            }
   }
   service_account {
     email  = "472954461540-compute@developer.gserviceaccount.com"
@@ -145,6 +157,7 @@ resource "google_compute_instance" "ns1" {
   machine_type = "e2-micro"
   zone         = "us-central1-c"
 
+  can_ip_forward             = true
   boot_disk {
     initialize_params {
       image = "https://www.googleapis.com/compute/v1/projects/debian-cloud/global/images/debian-12-bookworm-v20250113"
@@ -153,16 +166,26 @@ resource "google_compute_instance" "ns1" {
   enable_display             = false
   key_revocation_action_type = "NONE"
   network_interface {
-        network                     = "https://www.googleapis.com/compute/v1/projects/lexical-aquifer-445708-u1/global/networks/my-vpc"
+        network                     = "https://www.googleapis.com/compute/v1/projects/lexical-aquifer-445708-u1/global/networks/firstvpc"
         network_ip                  = "10.0.3.2"
         queue_count                 = 0
         stack_type                  = "IPV4_IPV6"
         subnetwork                  = "https://www.googleapis.com/compute/v1/projects/lexical-aquifer-445708-u1/regions/us-central1/subnetworks/public-subnet-uscentral"
         subnetwork_project          = "lexical-aquifer-445708-u1"
-        # access_config {
-        #     nat_ip       = 
-        #      network_tier = 
-        # }
+        
+        access_config {
+            nat_ip                 = "34.123.109.38"
+            network_tier           = "PREMIUM"
+            
+            }
+
+        ipv6_access_config {
+            external_ipv6               = "2600:1900:4000:8282:0:0:0:0"
+            external_ipv6_prefix_length = "96"
+            name                        = "external-ipv6"
+            network_tier                = "PREMIUM"
+              
+            }
   }
   service_account {
     email  = "472954461540-compute@developer.gserviceaccount.com"
@@ -196,16 +219,26 @@ resource "google_compute_instance" "ns2" {
   enable_display             = false
   key_revocation_action_type = "NONE"
   network_interface {
-        network                     = "https://www.googleapis.com/compute/v1/projects/lexical-aquifer-445708-u1/global/networks/my-vpc"
+        network                     = "https://www.googleapis.com/compute/v1/projects/lexical-aquifer-445708-u1/global/networks/firstvpc"
         network_ip                  = "10.0.3.3"
         queue_count                 = 0
         stack_type                  = "IPV4_IPV6"
         subnetwork                  = "https://www.googleapis.com/compute/v1/projects/lexical-aquifer-445708-u1/regions/us-central1/subnetworks/public-subnet-uscentral"
         subnetwork_project          = "lexical-aquifer-445708-u1"
-        # access_config {
-        #     nat_ip       = 
-        #      network_tier = 
-        # }
+        
+        access_config {
+            nat_ip                 = "104.198.132.29"
+            network_tier           = "PREMIUM"
+            
+            }
+
+        ipv6_access_config {
+            external_ipv6               = "2600:1900:4000:8282:0:1:0:0"
+            external_ipv6_prefix_length = "96"
+            name                        = "external-ipv6"
+            network_tier                = "PREMIUM"
+        }
+            
   }
   service_account {
     email  = "472954461540-compute@developer.gserviceaccount.com"
