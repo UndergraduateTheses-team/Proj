@@ -1,9 +1,7 @@
 name: Deploy Grafana & Prometheus
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   deploy:
