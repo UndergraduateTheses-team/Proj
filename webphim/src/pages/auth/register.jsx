@@ -93,7 +93,7 @@ function Register() {
                                     </button>
                                 </form>
                                 <h5>
-                                    Already have an account? <a href="#">Log In!</a>
+                                    Already have an account? <a href="/#">Log In!</a>
                                 </h5>
                             </div>
                         </div>
@@ -102,7 +102,7 @@ function Register() {
                                 <h3>Login With:</h3>
                                 <ul>
                                     <li>
-                                        <a href="#" className="google">
+                                        <a href="/#" className="google">
                                             <i className="fa fa-google"></i> Sign in With Google
                                         </a>
                                     </li>

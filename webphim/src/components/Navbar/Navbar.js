@@ -59,7 +59,7 @@ function Navbar() {
                                         <Link to={'/'}> Home Page</Link>
                                     </li>
                                     <li className="active">
-                                        <a href="#">
+                                        <a href="/#">
                                             Thể loại <span className="arrow_carrot-down"></span>
                                         </a>
                                         <ul className="dropdown">

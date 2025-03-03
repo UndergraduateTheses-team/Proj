@@ -67,7 +67,7 @@ function LoginPage() {
                                         Login Now
                                     </button>
                                 </form>
-                                <a href="#" className="forget_pass">
+                                <a href="/#" className="forget_pass">
                                     Forgot Your Password?
                                 </a>
                             </div>
@@ -88,7 +88,7 @@ function LoginPage() {
                                     <span>or</span>
                                     <ul>
                                         <li>
-                                            <a href="#" className="google">
+                                            <a href="/#" className="google">
                                                 <i className="fa fa-google"></i> Sign in With Google
                                             </a>
                                         </li>

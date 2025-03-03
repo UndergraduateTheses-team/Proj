@@ -153,19 +153,19 @@ function DetailFilm() {
                                         </div>
                                         <div className="anime__details__rating">
                                             <div className="rating">
-                                                <a href="#">
+                                                <a href="/#">
                                                     <i className="fa fa-star"></i>
                                                 </a>
-                                                <a href="#">
+                                                <a href="/#">
                                                     <i className="fa fa-star"></i>
                                                 </a>
-                                                <a href="#">
+                                                <a href="/#">
                                                     <i className="fa fa-star"></i>
                                                 </a>
-                                                <a href="#">
+                                                <a href="/#">
                                                     <i className="fa fa-star"></i>
                                                 </a>
-                                                <a href="#">
+                                                <a href="/#">
                                                     <i className="fa fa-star-half-o"></i>
                                                 </a>
                                             </div>
