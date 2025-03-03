@@ -49,6 +49,10 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}  
         run: |
-          gcloud compute ssh --project=lexical-aquifer-445708-u1 --zone=us-central1-c fe --command "cd /home/huahogiahuy_21042003/Proj/ && git pull"
-          gcloud compute ssh --project=lexical-aquifer-445708-u1 --zone=us-central1-c be --command "cd /home/huahogiahuy_21042003/Proj/ && git pull"
-          gcloud compute ssh --project=lexical-aquifer-445708-u1 --zone=us-central1-c database --command "cd /home/huahogiahuy_21042003/Proj/ && git pull"
+          gcloud compute rsync --recurse webphim/build/ fe:/var/www/html/ --project=lexical-aquifer-445708-u1 --zone=us-central1-c
+
+
+          gcloud compute rsync --recurse --exclude 'node_modules/' Server/ be:/home/huahogiahuy_21042003/Proj/Server/ --project=lexical-aquifer-445708-u1 --zone=us-central1-c
+
+
+          gcloud compute rsync --recurse --exclude 'node_modules/' ServerUpload/ database:/home/huahogiahuy_21042003/Proj/ServerUpload --project=lexical-aquifer-445708-u1 --zone=us-central1-c

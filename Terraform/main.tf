@@ -7,14 +7,14 @@ terraform {
   }
 }
 provider "google" {
-  project = "lexical-aquifer-445708-u1"  # Replace with your GCP project ID
-  region  = "us-central1"       # Replace with your desired region
-  zone    = "us-central1-c"     # Replace with your desired zone
+  project = "lexical-aquifer-445708-u1"
+  region  = "us-central1"      
+  zone    = "us-central1-c"   
 }
 
 resource "google_compute_instance" "fe" {
   name         = "fe"
-  machine_type = "e2-micro"       # You can adjust the machine type as needed
+  machine_type = "e2-micro"       
   zone         = "us-central1-c"
 
 
@@ -86,10 +86,7 @@ resource "google_compute_instance" "be" {
         stack_type                  = "IPV4_IPV6"
         subnetwork                  = "https://www.googleapis.com/compute/v1/projects/lexical-aquifer-445708-u1/regions/us-central1/subnetworks/private-subnet"
         subnetwork_project          = "lexical-aquifer-445708-u1"
-        # access_config {
-        #     nat_ip       = 
-        #      network_tier = 
-        # }
+
   }
   service_account {
     email  = "472954461540-compute@developer.gserviceaccount.com"
@@ -129,10 +126,7 @@ resource "google_compute_instance" "database" {
         stack_type                  = "IPV4_IPV6"
         subnetwork                  = "https://www.googleapis.com/compute/v1/projects/lexical-aquifer-445708-u1/regions/us-central1/subnetworks/private-subnet"
         subnetwork_project          = "lexical-aquifer-445708-u1"
-        # access_config {
-        #     nat_ip       = 
-        #      network_tier = 
-        # }
+
   }
   service_account {
     email  = "472954461540-compute@developer.gserviceaccount.com"
