@@ -1,0 +1,31 @@
+name: Build and Deploy to GKE
+
+on:
+  workflow_dispatch:
+  #push:
+  #  branches:
+  #    - mai
+
+env:
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  IMAGE_FE: fe
+  IMAGE_BE: be
+  IMAGE_TAG: latest
+  GAR_ZONE: us-central1
+
+jobs:
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+    environment: development
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    # Setup gcloud CLI
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v2.1.7'
+      with:
+        credentials_json: '${{ secrets.GKE_SA_KEY }}'
+
+    
