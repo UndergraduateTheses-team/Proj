@@ -7,10 +7,8 @@ on:
   #    - mai
 
 env:
-  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  IMAGE_FE: fe
-  IMAGE_BE: be
-  IMAGE_TAG: latest
+  PROJECT_ID: ${{ secrets.PROJECT_ID }}
+  SERVICE_KEY: secrets.SECRET_KEY
   GAR_ZONE: us-central1
 
 jobs:
@@ -26,33 +24,35 @@ jobs:
       - id: 'auth'
         uses: 'google-github-actions/auth@v2.1.7'
         with:
-          credentials_json: '${{ secrets.GKE_SA_KEY }}'
+          credentials_json: '${{ env.SERVICE_KEY }}'
 
+      - name: Create and Authenticate Service Account
+        run: |
+          echo '${{ env.SERVICE_KEY }}' > service_key.json
+          gcloud auth activate-service-account --key-file=service_key.json
+          gcloud config set project env.PROJECT_ID
 
       - name: Install Node.js and npm
         run: |
           sudo apt-get update
           sudo apt-get install -y nodejs npm
-  
 
       - name: Install Dependencies
         working-directory: webphim
         run: npm install
-  
 
       - name: Build Project
         working-directory: webphim
         run: npm run build
-  
 
-      - name: Deploy to Server (Copy Build Files)
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}  
+      - name: Deploy to fe (Copy Build Files)
         run: |
-          gcloud compute rsync --recurse webphim/build/ fe:/var/www/html/ --project=lexical-aquifer-445708-u1 --zone=us-central1-c
-
-
-          gcloud compute rsync --recurse --exclude 'node_modules/' Server/ be:/home/huahogiahuy_21042003/Proj/Server/ --project=lexical-aquifer-445708-u1 --zone=us-central1-c
-
-
-          gcloud compute rsync --recurse --exclude 'node_modules/' ServerUpload/ database:/home/huahogiahuy_21042003/Proj/ServerUpload --project=lexical-aquifer-445708-u1 --zone=us-central1-c
+             gcloud compute rsync --recurse webphim/build/* fe:/var/www/html/ --project=env.PROJECT_ID --zone=us-central1-c
+      - name:  Deploy to be
+        run: |
+             gcloud compute rsync --recurse Server/* be:/home/huahogiahuy_21042003/Proj/Server/ --project=env.PROJECT_ID --zone=us-central1-c
+         
+      - name: Deploy to database
+        run: |
+             gcloud compute rsync --recurse ServerUpload/* database:/home/huahogiahuy_21042003/Proj/ServerUpload --project=env.PROJECT_ID --zone=us-central1-c
+     
