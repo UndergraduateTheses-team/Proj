@@ -36,7 +36,7 @@ jobs:
       - name: Wait for Pods to Start
         run: |
           kubectl wait --for=condition=ready pod -n monitoring --timeout=300s --all || exit 1
-
+      # To-do: Push to github actions
       - name: Upgrade Vulnerable Dependencies
         run: |
           npm install --save mongoose@8.9.5 express@4.20.0 axios@1.7.4 \
