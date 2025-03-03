@@ -36,15 +36,6 @@ jobs:
       - name: Wait for Pods to Start
         run: |
           kubectl wait --for=condition=ready pod -n monitoring --timeout=300s --all || exit 1
-      # To-do: Push to github actions
-      - name: Upgrade Vulnerable Dependencies
-        run: |
-          npm install --save mongoose@8.9.5 express@4.20.0 axios@1.7.4 \
-            http-proxy-middleware@3.0.3 @testing-library/jest-dom@6.0.0 \
-            cross-spawn@7.0.5 nth-check@2.0.1 ws@8.17.1
-          rm -rf node_modules package-lock.json
-          npm install
-          npm audit fix
 
       - name: Install Snyk CLI
         run: npm install -g snyk
