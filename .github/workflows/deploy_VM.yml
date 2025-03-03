@@ -28,7 +28,7 @@ jobs:
 
       - name: Create and Authenticate Service Account
         run: |
-          echo '${{ env.SERVICE_KEY }}' > service_key.json
+          echo '${{ secrets.SERVICE_KEY }}' > service_key.json
           gcloud auth activate-service-account --key-file=service_key.json
           gcloud config set project env.PROJECT_ID
 
