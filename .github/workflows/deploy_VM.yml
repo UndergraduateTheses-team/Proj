@@ -49,8 +49,6 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}  
         run: |
-          echo "$SSH_PRIVATE_KEY" > private_key.pem
-          chmod 600 private_key.pem
-
-          scp -r -i private_key.pem webphim/build/* huahogiahuy_21042003@fe:/var/www/html/
-          scp -r Server/ USER@external_ip:/home/user/Proj/Server/
+          gcloud compute ssh --project=lexical-aquifer-445708-u1 --zone=us-central1-c fe --command "cd /home/huahogiahuy_21042003/Proj/ && git pull"
+          gcloud compute ssh --project=lexical-aquifer-445708-u1 --zone=us-central1-c be --command "cd /home/huahogiahuy_21042003/Proj/ && git pull"
+          gcloud compute ssh --project=lexical-aquifer-445708-u1 --zone=us-central1-c database --command "cd /home/huahogiahuy_21042003/Proj/ && git pull"
