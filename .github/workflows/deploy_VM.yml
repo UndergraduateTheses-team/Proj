@@ -30,7 +30,7 @@ jobs:
         run: |
           echo '${{ secrets.SERVICE_KEY }}' > service_key.json
           gcloud auth activate-service-account --key-file=service_key.json
-          gcloud config set project env.PROJECT_ID
+          gcloud config set project $PROJECT_ID
 
       - name: Install Node.js and npm
         run: |
