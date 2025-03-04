@@ -64,12 +64,12 @@ jobs:
 
       - name: Deploy to fe (Copy Build Files)
         run: |
-             gcloud compute rsync --recurse webphim/build/* fe:/var/www/html/ --project=env.PROJECT_ID --zone=us-central1-c
+             gcloud compute scp --recurse webphim/build/* fe:/var/www/html/ --project=env.PROJECT_ID --zone=us-central1-c
       - name:  Deploy to be
         run: |
-             gcloud compute rsync --recurse Server/* be:/home/huahogiahuy_21042003/Proj/Server/ --project=env.PROJECT_ID --zone=us-central1-c
+             gcloud compute scp --recurse Server/* be:/home/huahogiahuy_21042003/Proj/Server/ --project=env.PROJECT_ID --zone=us-central1-c
          
       - name: Deploy to database
         run: |
-             gcloud compute rsync --recurse ServerUpload/* database:/home/huahogiahuy_21042003/Proj/ServerUpload --project=env.PROJECT_ID --zone=us-central1-c
+             gcloud compute scp --recurse ServerUpload/* database:/home/huahogiahuy_21042003/Proj/ServerUpload --project=env.PROJECT_ID --zone=us-central1-c
      
