@@ -41,7 +41,19 @@ jobs:
       #     sudo apt-get install -y nodejs npm
       - name: clean cache
         run: npm cache clean --force
+      
+      - name : env for fe
+        working-directory: webphim
+        run: echo -e '${{secrets.PORTFE}}\n${{secrets.BACKEND_IP}}' > .env
         
+      - name : env for be
+        working-directory: Server
+        run: echo -e '${{secrets.SERVER_UPLOAD_IP}}\n${{secrets.MONGODB_URI}}\n${{secrets.PORTSV}}' > .env
+      
+      - name : env for database
+        working-directory: ServerUpload
+        run: echo -e '${{secrets.ITSELF_IP}}\n${{secrets.PORTDB}}'> .env
+
       - name: Install Dependencies
         working-directory: webphim
         run: npm install
