@@ -60,7 +60,7 @@ jobs:
 
       - name: Build Project
         working-directory: webphim
-        run: npm run build
+        run: CI=false npm run build
 
       - name: Deploy to fe (Copy Build Files)
         run: |
