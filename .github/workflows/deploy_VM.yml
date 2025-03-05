@@ -30,7 +30,7 @@ jobs:
           credentials_json: '${{ secrets.SERVICE_KEY }}'
       - name: get to super user
         run: sudo su
-        
+
       - name: Create and Authenticate Service Account
         run: |
           echo '${{ secrets.SERVICE_KEY }}' > service_key.json
@@ -60,18 +60,21 @@ jobs:
         working-directory: webphim
         run: npm install
 
+      - name: check current user
+        run: echo $(whoami)
+
       - name: Build Project
         working-directory: webphim
         run: CI=false npm run build
 
       - name: Deploy to fe (Copy Build Files)
         run: |
-             gcloud compute scp --recurse webphim/build/* fe:/var/www/html/ --project=$PROJECT_ID --zone=us-central1-c
+             gcloud compute scp --recurse webphim/build/* huahogiahuy_21042003@fe:/var/www/html/ --project=$PROJECT_ID --zone=us-central1-c
       - name:  Deploy to be
         run: |
-             gcloud compute scp --recurse Server/* be:/home/huahogiahuy_21042003/Proj/Server/ --project=$PROJECT_ID --zone=us-central1-c
+             gcloud compute scp --recurse Server/* huahogiahuy_21042003@be:/home/huahogiahuy_21042003/Proj/Server/ --project=$PROJECT_ID --zone=us-central1-c
          
       - name: Deploy to database
         run: |
-             gcloud compute scp --recurse ServerUpload/* database:/home/huahogiahuy_21042003/Proj/ServerUpload --project=$PROJECT_ID --zone=us-central1-c
+             gcloud compute scp --recurse ServerUpload/* huahogiahuy_21042003@database:/home/huahogiahuy_21042003/Proj/ServerUpload --project=$PROJECT_ID --zone=us-central1-c
      
