@@ -23,12 +23,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-
+      
       - id: 'auth'
         uses: 'google-github-actions/auth@v2.1.7'
         with:
           credentials_json: '${{ secrets.SERVICE_KEY }}'
-
+      - name: get to super user
+        run: sudo su
+        
       - name: Create and Authenticate Service Account
         run: |
           echo '${{ secrets.SERVICE_KEY }}' > service_key.json
