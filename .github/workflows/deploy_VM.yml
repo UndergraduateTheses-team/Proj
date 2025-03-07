@@ -28,18 +28,13 @@ jobs:
         uses: 'google-github-actions/auth@v2.1.7'
         with:
           credentials_json: '${{ secrets.SERVICE_KEY }}'
-      - name: get to super user
-        run: sudo su
-
+          
       - name: Create and Authenticate Service Account
         run: |
           echo '${{ secrets.SERVICE_KEY }}' > service_key.json
           gcloud auth activate-service-account --key-file=service_key.json
           gcloud config set project $PROJECT_ID
 
-      - name: clean cache
-        run: npm cache clean --force
-      
       - name : env for fe
         working-directory: webphim
         run: echo -e 'PORT=${{secrets.PORTFE}}\nBACKEND_IP=${{secrets.BACKEND_IP}}' > .env
@@ -66,11 +61,12 @@ jobs:
       - name: Deploy to fe (Copy Build Files)
         run: |
              gcloud compute scp --recurse webphim/build/* huahogiahuy_21042003@fe:/var/www/html/ --project=$PROJECT_ID --zone=us-central1-c
-      - name:  Deploy to be
-        run: |
-             gcloud compute scp --recurse Server/* huahogiahuy_21042003@be:/home/huahogiahuy_21042003/Proj/Server/ --project=$PROJECT_ID --zone=us-central1-c
-         
+      
       - name: Deploy to database
         run: |
-             gcloud compute scp --recurse ServerUpload/* huahogiahuy_21042003@database:/home/huahogiahuy_21042003/Proj/ServerUpload --project=$PROJECT_ID --zone=us-central1-c
-     
+             gcloud compute scp --recurse ServerUpload/* huahogiahuy_21042003@database:/home/huahogiahuy_21042003/Proj/ServerUpload --project=$PROJECT_ID --zone=us-central1-c --tunnel-through-iap
+      
+      - name:  Deploy to be
+        run: |
+             gcloud compute scp --recurse Server/* huahogiahuy_21042003@be:/home/huahogiahuy_21042003/Proj/Server/ --project=$PROJECT_ID --zone=us-central1-c --tunnel-through-iap
+              
