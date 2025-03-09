@@ -18,26 +18,23 @@ function Footer({ className }) {
                         <li className={cs('item')}>
                             <a href="tel:phonenumber" className={cs('item-link')}>
                                 <FontAwesomeIcon className={cs('icon')} icon={faPhone} />
-                                Phone Number : 0337883917
+                                Phone Number : 0981273581
                             </a>
                         </li>
 
                         <li className={cs('item')}>
                             <a href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox" className={cs('item-link')}>
                                 <FontAwesomeIcon className={cs('icon')} icon={faEnvelope} />
-                                Email : thanhtam01224@gmail.com
+                                Email : giahuy96.17.18@gmail.com
                             </a>
                         </li>
 
-                        <li className={cs('item')}>
+                        {/* <li className={cs('item')}>
                             <a
                                 href="https://www.google.com/maps/search/100%2F8+Quang+Trung,+T%C4%83ng+Nh%C6%A1n+Ph%C3%BA+B,+Th%C3%A0nh+ph%E1%BB%91+H%E1%BB%93+Ch%C3%AD+Minh/@10.8608434,106.7824432,15z?entry=ttu"
                                 className={cs('item-link')}
-                            >
-                                <FontAwesomeIcon className={cs('icon')} icon={faHome} />
-                                Address : To Tang Nhon Phu B-Quan 9-Thu Duc
-                            </a>
-                        </li>
+                            ></a>
+                        </li> */}
                     </ul>
                 </div>
 
@@ -45,22 +42,22 @@ function Footer({ className }) {
                     <h4 className={cs('heading')}>Follow Me</h4>
                     <ul className={cs('list')}>
                         <li className={cs('item')}>
-                            <a href="https://www.facebook.com/ThankTam2208" target="_blank" className={cs('item-link')}>
+                            <a href="https://www.facebook.com/huy042003" target="_blank" className={cs('item-link')}>
                                 <FontAwesomeIcon className={cs('icon')} icon={faFacebook} />
                                 Facebook
                             </a>
                         </li>
 
-                        <li className={cs('item')}>
+                        {/* <li className={cs('item')}>
                             <a
-                                href="https://www.instagram.com/triplet_ins22/"
+                                href="https://www.instagram.com/"
                                 target="_blank"
                                 className={cs('item-link')}
                             >
                                 <FontAwesomeIcon className={cs('icon')} icon={faInstagram} />
                                 Instagram
                             </a>
-                        </li>
+                        </li> */}
 
                         <li className={cs('item')}>
                             <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" className={cs('item-link')}>
