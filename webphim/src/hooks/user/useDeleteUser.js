@@ -6,6 +6,7 @@ const useDeleteUser = () => {
         try {
             const response = await fetch(`/Api/api/user/delete/${userId}`, {
                 method: 'DELETE',
+                credentials: 'include',
             });
             const data = await response.json();
             if (response.ok) {

@@ -15,7 +15,7 @@ app.use(express.json());
 app.use((req, res, next) => {
   res.setHeader(
     "Content-Security-Policy",
-    `default-src 'self' blob: http://${process.env.SERVER_UPLOAD_IP}:8090; ` +
+    `default-src 'self' blob: http://${process.env.SERVER_UPLOAD_IP}:8090 http://${process.env.WEBPHIM}:3009; ` +
     "script-src 'self' https://unpkg.com http://localhost:8090; " + 
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com/; " + 
     `img-src 'self' data: http://${process.env.SERVER_UPLOAD_IP}:8090; ` +

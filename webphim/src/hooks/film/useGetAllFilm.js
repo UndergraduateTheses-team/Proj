@@ -5,7 +5,10 @@ const useGetAllFilm = () => {
 
     useEffect(() => {
         const getFilmsInfor = async () => {
-            const response = await fetch('/Api/api/films/');
+            const response = await fetch('/Api/api/films/',{
+                method: 'GET',
+                credentials: 'include', 
+            });
             const data = await response.json();
             if (response.ok) {
                 setFilmList(data.datas);

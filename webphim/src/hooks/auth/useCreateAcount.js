@@ -10,7 +10,6 @@ const useCreateAccount = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                credentials:'include',
                 body: JSON.stringify(infor),
             });
             const data = await response.json();
