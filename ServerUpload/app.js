@@ -16,11 +16,11 @@ app.use(cors({
 app.use((req, res, next) => {
   res.setHeader(
     "Content-Security-Policy",
-    `default-src 'self' blob: http://${process.env.ITSELF_IP}:8090;`  +
+    `default-src 'self' blob: http://${process.env.ITSELF_IP}:8090 http://${process.env.TO_SERVER}:8089;`  +
     "script-src 'self' https://unpkg.com; " + 
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com/; " + 
-    `img-src 'self' data: http://${process.env.ITSELF_IP}:8090;`  +
-    `media-src 'self' data: http://${process.env.ITSELF_IP}:8090;`  +
+    `img-src 'self' data: http://${process.env.ITSELF_IP}:8090 http://${process.env.TO_SERVER}:8089;`  +
+    `media-src 'self' data: http://${process.env.ITSELF_IP}:8090 http://${process.env.TO_SERVER}:8089;`  +
     "worker-src 'self' blob: *;" +
     "font-src 'self' data: https://fonts.gstatic.com;"
   );
