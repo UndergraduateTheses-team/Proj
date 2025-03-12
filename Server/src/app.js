@@ -48,9 +48,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 console.log("thu muc hien tai: ", __dirname);
 app.use("/api", router);
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "../build/index.html"));
-});
+// app.get("*", (req, res) => {
+//   res.sendFile(path.resolve(__dirname, "../build/index.html"));
+// });
 mongoose.connect(`${process.env.MONGODB_URI}`)
         .then(() => {
           console.log("Connect to db success");
