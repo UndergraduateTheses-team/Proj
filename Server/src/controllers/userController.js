@@ -24,7 +24,7 @@ export const getAllUsers = async (req, res) => {
 export const getUserDetail = async (req, res) => {
   try {
     const userId = req.user._id;
-    console.log("user:", req.user);
+    // console.log("user:", req.user);
     const user = await User.findOne({ _id:userId }).select("-password,-isAdmin,-favorite,-rating");
     if (user) {
       res.status(200).json({
@@ -58,7 +58,8 @@ export const updateUser = async (req, res) => {
       const blob = new Blob([fileBuffer], { type: req.file.mimetype });
       const formData = new FormData();
       formData.append("file", blob, req.file.filename);
-
+      
+      console.log("Formdata:",formData);
       const response = await fetch(`http://${process.env.SERVER_UPLOAD_IP}:8090/uploads`, {
         method: "POST",
         credentials: "include",

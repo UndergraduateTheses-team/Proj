@@ -11,8 +11,7 @@ const protectRoute = async (req, res, next) => {
         .json({ error: "Unauthorized - No token provider !" });
     }
 
-    // const decoded = await jwt.verify(token, "GOITOILAGI");
-    // Wrap jwt.verify in a Promise
+
     const decoded = await new Promise((resolve, reject) => {
       jwt.verify(token, "GOITOILAGI", (err, decodedToken) => {
         if (err) {
@@ -29,7 +28,7 @@ const protectRoute = async (req, res, next) => {
           }
  
     const user = await User.findById(decoded.userId).select("-password");
-    console.log("decoded:",decoded, user);
+    // console.log("decoded:",decoded, user);
     if (!user) {
       return res.status(404).json({ error: "User not found !" });
     }
