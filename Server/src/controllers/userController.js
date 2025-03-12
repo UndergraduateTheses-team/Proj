@@ -24,6 +24,7 @@ export const getAllUsers = async (req, res) => {
 export const getUserDetail = async (req, res) => {
   try {
     const userId = req.user._id;
+    console.log("user:", req.user);
     const user = await User.findOne({ _id:userId }).select("-password,-isAdmin,-favorite,-rating");
     if (user) {
       res.status(200).json({

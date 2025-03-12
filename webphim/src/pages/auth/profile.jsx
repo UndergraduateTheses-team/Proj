@@ -50,6 +50,7 @@ function Profile() {
                 const dataUser = await response.json();
                 if (dataUser.success) {
                     setUser(dataUser.data);
+                    console.log("dataUser:",dataUser.data);
                     setUserInfor({
                         name: dataUser.data.name,
                         avatar: dataUser.data.avatar,
