@@ -4,11 +4,15 @@ import { fileURLToPath } from "url";
 
 // Lấy đường dẫn thư mục hiện tại
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
+console.log("Store dir:",path.join(__dirname, "../static/uploads").replace(path.sep + "src", ""));
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "../static/uploads").replace("\\src", "")); // Chỉ đường dẫn tới thư mục uploads
+    cb(null, path.join(__dirname, "../static/uploads").replace(path.sep + "src", "")); // Chỉ đường dẫn tới thư mục uploads
   },
+
+
+
+  
   filename: function (req, file, cb) {
     //const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     cb(
