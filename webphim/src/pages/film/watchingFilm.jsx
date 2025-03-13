@@ -47,7 +47,7 @@ function WatchFilm() {
                     <div className="row">
                         <div className="col-12">
                             <div className="anime__video__player">
-                                <ReactPlayer
+                                <ReactPlayer //HLS, RTMP, DASH protocol chose by reactPlayer to stream (support Ipv6)
                                     playing={true}
                                     width="100%"
                                     height="100%"

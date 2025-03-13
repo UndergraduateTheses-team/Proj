@@ -29,7 +29,11 @@ app.use((req, res, next) => {
 
 
 app.use(cors({
-	origin: "*",
+	origin: [
+    `http://${process.env.FRONT_END_IP}:3009`,
+    `http://${process.env.SERVER_UPLOAD_IP}:8090`,`http://${process.env.FRONT_END_IP}`,`http://${process.env.DOMAIN}`],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],  
+  allowedHeaders: ['Content-Type', 'Authorization'],
 	credentials: true,
 }));
 

@@ -9,8 +9,12 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-  origin: "*",
-  credentials: true,
+  origin: [
+    `http://${process.env.FRONT_END_IP}:3009`,
+    `http://${process.env.TO_SERVER}:8090`,`http://${process.env.FRONT_END_IP}`,`http://${process.env.DOMAIN}`],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],  
+  allowedHeaders: ['Content-Type', 'Authorization'],
+	credentials: true,
 }));
 
 app.use((req, res, next) => {

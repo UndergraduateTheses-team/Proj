@@ -172,7 +172,7 @@ export const update = async (req, res) => {
       const data = await response.json();
       filmData.poster_img = data;
 
-      // Loại bỏ tệp cũ nếu một tệp mới được tải lên
+      // Loại bỏ tệp cũ nếu một tệp mới được tải lên server
       const existingFilm = await Film.findById(id);
       if (existingFilm && existingFilm.poster_img) {
         const oldFilePath = `/path/to/uploaded/files/${existingFilm.poster_img.filename}`;

@@ -71,6 +71,7 @@ export const updateUser = async (req, res) => {
       }
 
       const data = await response.json();
+      console.log("data:",data);
       userData.avatar = data;
 
       const existingUser = await User.findById(userId);
@@ -87,7 +88,7 @@ export const updateUser = async (req, res) => {
       new: true,
       runValidators: true,
     });
-
+console.log("updatedUser:", updatedUser);
     if (!updatedUser) {
       return res.status(400).json({
         message: "Cập nhật không thành công!",
