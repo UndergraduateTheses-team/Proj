@@ -35,6 +35,19 @@ export const createEpisodeForMovie = async (req, res) => {
   // Lấy movieId từ URL thông qua req.params
   const { movieId } = req.params;
 
+  async function fetchWithTimeout(url, options, timeout) {
+    // Create a timeout promise that rejects after a specified time
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Request timed out')), timeout)
+    );
+  
+    // Use Promise.race to race between the fetch request and the timeout
+    return Promise.race([
+      fetch(url, options),    // The actual fetch request
+      timeoutPromise          // The timeout promise
+    ]);
+  }
+
   try {
     if (req.file) {
       const fileBuffer = fs.readFileSync(req.file.path);
@@ -44,11 +57,16 @@ export const createEpisodeForMovie = async (req, res) => {
       const formData = new FormData();
       formData.append("file", blob, req.file.filename);
 
-      const response = await fetch(`http://${process.env.SERVER_UPLOAD_IP}:8090/uploads`, {
-        method: "POST",
-        credentials: "include",
-        body: formData,
-      });
+      const response = await fetchWithTimeout(
+        `http://${process.env.SERVER_UPLOAD_IP}:8090/uploads`,
+        {
+          method: "POST",
+          credentials: "include",
+          body: formData,
+        },
+        10000000 // Timeout set to 10,000,000 ms (around 2.77 hours)
+      );
+      
       const data = await response.json();
       const filePath = data;
 

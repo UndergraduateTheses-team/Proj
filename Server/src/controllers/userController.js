@@ -88,8 +88,10 @@ export const updateUser = async (req, res) => {
       new: true,
       runValidators: true,
     });
+
 console.log("updatedUser:", updatedUser);
-    if (!updatedUser) {
+
+if (!updatedUser) {
       return res.status(400).json({
         message: "Cập nhật không thành công!",
       });
