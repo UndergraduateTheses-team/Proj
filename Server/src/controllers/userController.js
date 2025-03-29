@@ -59,8 +59,8 @@ export const updateUser = async (req, res) => {
       const formData = new FormData();
       formData.append("file", blob, req.file.filename);
       
-      // console.log("Formdata:",formData);
-      const response = await fetch(`http://${process.env.SERVER_UPLOAD_IP}:8090/uploads`, {
+      
+      const response = await fetch(`http://${process.env.NGINX_SERVER_IP}/uploads`, {
         method: "POST",
         credentials: "include",
         body: formData,
@@ -73,7 +73,7 @@ export const updateUser = async (req, res) => {
       const data = await response.json();
       console.log("data:",data);
       userData.avatar = data;
-
+      console.log("is the avatar link updated?:", userData.avatar);
       const existingUser = await User.findById(userId);
       if (existingUser && existingUser.avatar) {
         const oldFilePath = `/path/to/uploaded/files/${existingUser.avatar.filename}`;

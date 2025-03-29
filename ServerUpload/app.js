@@ -10,8 +10,8 @@ const app = express();
 
 app.use(cors({
   origin: [
-    `http://${process.env.FRONT_END_IP}:3009`,
-    `http://${process.env.TO_SERVER}:8090`,`http://${process.env.FRONT_END_IP}`,`http://${process.env.DOMAIN}`],
+    `http://${process.env.NGINX_SERVER_IP}`,
+    `http://${process.env.TO_SERVER}:8090`,`http://${process.env.DOMAIN}`],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],  
   allowedHeaders: ['Content-Type', 'Authorization'],
 	credentials: true,

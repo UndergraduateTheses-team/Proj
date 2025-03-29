@@ -36,15 +36,13 @@ export const createEpisodeForMovie = async (req, res) => {
   const { movieId } = req.params;
 
   async function fetchWithTimeout(url, options, timeout) {
-    // Create a timeout promise that rejects after a specified time
     const timeoutPromise = new Promise((_, reject) =>
       setTimeout(() => reject(new Error('Request timed out')), timeout)
     );
   
-    // Use Promise.race to race between the fetch request and the timeout
     return Promise.race([
-      fetch(url, options),    // The actual fetch request
-      timeoutPromise          // The timeout promise
+      fetch(url, options),   
+      timeoutPromise
     ]);
   }
 
@@ -58,7 +56,7 @@ export const createEpisodeForMovie = async (req, res) => {
       formData.append("file", blob, req.file.filename);
 
       const response = await fetchWithTimeout(
-        `http://${process.env.SERVER_UPLOAD_IP}:8090/uploads`,
+        `http://${process.env.NGINX_SERVER_IP}/uploads`,
         {
           method: "POST",
           credentials: "include",
