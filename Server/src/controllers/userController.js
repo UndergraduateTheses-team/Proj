@@ -60,7 +60,7 @@ export const updateUser = async (req, res) => {
       formData.append("file", blob, req.file.filename);
       
       
-      const response = await fetch(`http://${process.env.NGINX_SERVER_IP}/uploads`, {
+      const response = await fetch(`http://${process.env.NGINX_SERVER_IP}/uploads/`, {
         method: "POST",
         credentials: "include",
         body: formData,

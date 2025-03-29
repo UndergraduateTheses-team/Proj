@@ -56,7 +56,7 @@ export const createEpisodeForMovie = async (req, res) => {
       formData.append("file", blob, req.file.filename);
 
       const response = await fetchWithTimeout(
-        `http://${process.env.NGINX_SERVER_IP}/uploads`,
+        `http://${process.env.NGINX_SERVER_IP}/uploads/`,
         {
           method: "POST",
           credentials: "include",
