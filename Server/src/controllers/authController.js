@@ -27,7 +27,7 @@ dotenv.config();
 
       const user = await User.create({
         ...req.body,
-        avatar: `http://${process.env.NGINX_SERVER_IP}/uploads/avatar/avatar.png`,
+        avatar: `https://${process.env.DOMAIN}/uploads/avatar/avatar.png`,
         password: hashNewPassword,
       });
       user.password = undefined;

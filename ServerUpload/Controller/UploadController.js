@@ -7,7 +7,7 @@ const uploadFile = (req, res) => {
     if (file) {
       
       const filePath =
-        `http://${process.env.NGINX_SERVER_IP}/` +
+        `https://${process.env.DOMAIN}/` +
         req.file.path.substring(req.file.path.indexOf("uploads"));
       console.log("filepath:", filePath);
       return res.status(201).json(filePath);
