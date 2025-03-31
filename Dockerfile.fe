@@ -14,9 +14,9 @@ ENV GITHUB_REF=${GITHUB_REF}
 WORKDIR /app
 
 # Copy dependency files
-COPY webphim/package*.json ./
+COPY FE-Server/package*.json ./
 RUN npm install
-COPY webphim .
+COPY FE-Server .
 RUN npm run build
 
 FROM nginx:alpine

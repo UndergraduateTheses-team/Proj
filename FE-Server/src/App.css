@@ -1,0 +1,43 @@
+* {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    vertical-align: baseline;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+:root {
+    --color-white: rgb(226, 218, 218);
+    --color-background: rgb(17, 17, 17);
+}
+body {
+    font-family: 'Mulish', sans-serif;
+    font-size: 18px;
+    line-height: 30px;
+    
+}
+
+.div-create-genre {
+    display: flex;
+    flex-flow: row wrap;
+
+    justify-content: center;
+    align-items: center;
+
+    background-color: hotpink;
+}
+
+.form-create-genre {
+    display: flex;
+    flex-flow: column wrap;
+
+    background-color: greenyellow;
+
+    justify-content: center;
+    align-items: center;
+}

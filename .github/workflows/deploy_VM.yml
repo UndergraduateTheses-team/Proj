@@ -36,37 +36,37 @@ jobs:
           gcloud config set project $PROJECT_ID
 
       - name : env for fe
-        working-directory: webphim
+        working-directory: FE-Server
         run: echo -e 'PORT=${{secrets.PORTFE}}\nBACKEND_IP=${{secrets.BACKEND_IP}}' > .env
         
       - name : env for be
-        working-directory: Server
+        working-directory: API-Server
         run: echo -e 'SERVER_UPLOAD_IP=${{secrets.SERVER_UPLOAD_IP}}\nMONGODB_URI=${{secrets.MONGODB_URI}}\nPORT=${{secrets.PORTSV}}' > .env
       
       - name : env for database
-        working-directory: ServerUpload
+        working-directory: Media-Server
         run: echo -e 'ITSELF_IP=${{secrets.ITSELF_IP}}\nPORTDB=${{secrets.PORTDB}}'> .env
 
       - name: Install Dependencies
-        working-directory: webphim
+        working-directory: FE-Server
         run: npm install
 
       - name: check current user
         run: echo $(whoami)
 
       - name: Build Project
-        working-directory: webphim
+        working-directory: FE-Server
         run: CI=false npm run build
 
       - name: Deploy to fe (Copy Build Files)
         run: |
-             gcloud compute scp --recurse webphim/build/* huahogiahuy_21042003@fe:/var/www/html/ --project=$PROJECT_ID --zone=us-central1-c
+             gcloud compute scp --recurse FE-Server/build/* huahogiahuy_21042003@fe:/var/www/html/ --project=$PROJECT_ID --zone=us-central1-c
       
       - name: Deploy to database
         run: |
-             gcloud compute scp --recurse ServerUpload/* huahogiahuy_21042003@database:/home/huahogiahuy_21042003/Proj/ServerUpload --project=$PROJECT_ID --zone=us-central1-c --tunnel-through-iap
+             gcloud compute scp --recurse Media-Server/* huahogiahuy_21042003@database:/home/huahogiahuy_21042003/Proj/Media-Server --project=$PROJECT_ID --zone=us-central1-c --tunnel-through-iap
       
       - name:  Deploy to be
         run: |
-             gcloud compute scp --recurse Server/* huahogiahuy_21042003@be:/home/huahogiahuy_21042003/Proj/Server/ --project=$PROJECT_ID --zone=us-central1-c --tunnel-through-iap
+             gcloud compute scp --recurse API-Server/* huahogiahuy_21042003@be:/home/huahogiahuy_21042003/Proj/API-Server/ --project=$PROJECT_ID --zone=us-central1-c --tunnel-through-iap
               
