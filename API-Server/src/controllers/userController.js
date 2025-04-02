@@ -60,7 +60,7 @@ export const updateUser = async (req, res) => {
       formData.append("file", blob, req.file.filename);
       
       
-      const response = await fetch(`${process.env.FQDN}/uploads/`, {
+      const response = await fetch(`${process.env.FQDN_MEDIA_SERVER}/uploads/`, {
         method: "POST",
         credentials: "include",
         body: formData,

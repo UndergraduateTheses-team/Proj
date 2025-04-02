@@ -16,7 +16,7 @@ app.use((req, res, next) => {
   res.setHeader(
     "Content-Security-Policy",
     `default-src 'self' blob: http://${process.env.MEDIA_SERVER}:8090 http://${process.env.DOMAIN} https://${process.env.DOMAIN} http://www.${process.env.DOMAIN} https://www.${process.env.DOMAIN} http://${process.env.FE_SERVER}:3009 ; ` +
-    `script-src 'self' https://unpkg.com http://${process.env.MEDIA_SERVER}:8090 http://${process.env.DOMAIN} https://${process.env.DOMAIN} http://www.${process.env.DOMAIN} https://www.${process.env.DOMAIN} http://${process.env.FE_SERVER}:3009 ; ` + 
+    `script-src 'self' https://unpkg.com https://unpkg.com/ionicons@7.1.0/dist/ionicons/p-d15ec307.js  http://${process.env.MEDIA_SERVER}:8090 http://${process.env.DOMAIN} https://${process.env.DOMAIN} http://www.${process.env.DOMAIN} https://www.${process.env.DOMAIN} http://${process.env.FE_SERVER}:3009 ; ` + 
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com/; " + 
     `img-src 'self' data: http://${process.env.MEDIA_SERVER}:8090 http://${process.env.DOMAIN} https://${process.env.DOMAIN} http://www.${process.env.DOMAIN} https://www.${process.env.DOMAIN} http://${process.env.FE_SERVER}:3009 ; ` +
     `media-src 'self' blob: * data: http://${process.env.MEDIA_SERVER}:8090 http://${process.env.DOMAIN} https://${process.env.DOMAIN} http://www.${process.env.DOMAIN} https://www.${process.env.DOMAIN} http://${process.env.FE_SERVER}:3009 ; ` +
