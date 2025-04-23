@@ -1,11 +1,13 @@
 import jwt from "jsonwebtoken";
 import User from "../src/models/users.js";
+import dotenv from 'dotenv';
+dotenv.config();
 import pino from 'pino'
 import ecsFormat from '@elastic/ecs-pino-format'
 
 const transport = pino.transport({
     target: 'pino/file',
-    options: { destination: "var/pinolog/log.json", mkdir: true, colorize: false }
+    options: { destination: process.env.destpinolog, mkdir: true, colorize: false }
 });
 const logger = pino({
     level: 'info',

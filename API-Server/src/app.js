@@ -6,12 +6,13 @@ import path from "path";
 import { fileURLToPath } from "url";
 import cookieParser from "cookie-parser";
 import dotenv from 'dotenv';
+dotenv.config();
 import pino from 'pino'
 import ecsFormat from '@elastic/ecs-pino-format'
 
 const transport = pino.transport({
     target: 'pino/file',
-    options: { destination: "var/pinolog/log.json", mkdir: true, colorize: false }
+    options: { destination: process.env.destpinolog, mkdir: true, colorize: false }
 });
 const logger = pino({
     level: 'info',
@@ -23,7 +24,7 @@ const logger = pino({
 
     timestamp: () => `,"time":"${new Date().toLocaleTimeString()}"` 
 }, transport, ecsFormat())
-dotenv.config();
+
 
 const app = express();
 
