@@ -7,6 +7,24 @@ import Genre from "../models/genres.js";
 import { error } from "console";
 import dotenv from 'dotenv';
 dotenv.config();
+import pino from 'pino'
+import ecsFormat from '@elastic/ecs-pino-format'
+
+const transport = pino.transport({
+    target: 'pino/file',
+    options: { destination: "var/pinolog/log.json", mkdir: true, colorize: false }
+});
+const logger = pino({
+    level: 'info',
+    formatters: {
+        level: (label) => {
+            return { level: label.toUpperCase() };
+        }
+    },
+
+    timestamp: () => `,"time":"${new Date().toLocaleTimeString()}"` 
+}, transport, ecsFormat())
+
 export const get = async (req, res) => {
   try {
     const film = await Film.find();
@@ -41,6 +59,7 @@ export const getFilm = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
+    logger.error(error);
     return res.status(500).json({
       message: "loi sever",
     });
@@ -71,6 +90,7 @@ export const getDetail = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
+    logger.error(error);
     return res.status(500).json({
       message: "loi sever",
     });
@@ -93,6 +113,7 @@ export const getFilmByGenresId = async (req, res) => {
     return res.status(200).json({ filmList: films, genreName: genre.name });
   } catch (error) {
     console.log(error);
+    logger.error(error);
     return res.status(500).json(error);
   }
 };
@@ -138,6 +159,7 @@ export const create = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
+    logger.error(error);
     return res.status(500).json({
       message: "loi sever",
     });
@@ -254,6 +276,7 @@ export const followFilm = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
+    logger.error(error);
     return res.status(500).json({
       error: error.message,
     });
@@ -299,6 +322,7 @@ export const getWatchingTime = async (req, res) => {
     return res.status(200).json(history);
   } catch (error) {
     console.log(error);
+    logger.error(error);
     return res.status(500).json({
       error: error.message,
     });
@@ -417,6 +441,7 @@ export const getRateOfUser = async (req, res) => {
     return res.status(200).json(user.rating[ratingIndex].rate);
   } catch (error) {
     console.log(error);
+    logger.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

@@ -6,6 +6,23 @@ import path from "path";
 import { fileURLToPath } from "url";
 import cookieParser from "cookie-parser";
 import dotenv from 'dotenv';
+import pino from 'pino'
+import ecsFormat from '@elastic/ecs-pino-format'
+
+const transport = pino.transport({
+    target: 'pino/file',
+    options: { destination: "var/pinolog/log.json", mkdir: true, colorize: false }
+});
+const logger = pino({
+    level: 'info',
+    formatters: {
+        level: (label) => {
+            return { level: label.toUpperCase() };
+        }
+    },
+
+    timestamp: () => `,"time":"${new Date().toLocaleTimeString()}"` 
+}, transport, ecsFormat())
 dotenv.config();
 
 const app = express();
@@ -48,15 +65,18 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 app.use(express.static(path.resolve(__dirname, "../static")));
 
 console.log("thu muc hien tai: ", __dirname);
+logger.info("thu muc hien tai: ", __dirname);
 app.use("/api", router);
 
 mongoose.connect(`${process.env.MONGODB_URI}`)
         .then(() => {
           console.log("Connect to db success");
+          logger.info("Connect to db success");
               })
         .catch(err => console.error("Failed to connect to DB:", err));
 app.listen(process.env.PORT, () => {
   console.log("Server is running 8089 port");
+  logger.info("Server is running 8089 port");
 });
 
 // app.use(

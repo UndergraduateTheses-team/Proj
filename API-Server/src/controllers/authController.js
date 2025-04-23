@@ -4,6 +4,24 @@ import bcrypt from "bcryptjs";
 import { registerSchema } from "../validations/authValid.js";
 import generateTokenAndSetCookie from "../../until/gennerateToken.js";
 import dotenv from 'dotenv';
+import pino from 'pino'
+import ecsFormat from '@elastic/ecs-pino-format'
+
+const transport = pino.transport({
+    target: 'pino/file',
+    options: { destination: "var/pinolog/log.json", mkdir: true, colorize: false }
+});
+const logger = pino({
+    level: 'info',
+    formatters: {
+        level: (label) => {
+            return { level: label.toUpperCase() };
+        }
+    },
+
+    timestamp: () => `,"time":"${new Date().toLocaleTimeString()}"` 
+}, transport, ecsFormat())
+
 dotenv.config();
 
   export const register = async (req, res) => {
@@ -82,6 +100,7 @@ export const logout = (req, res) => {
     return res.status(200).json({ message: "Đăng xuất thành công" });
   } catch (err) {
     console.log(err);
+    logger.error(error);
     return res.status(500).json({ error: err });
   }
 };

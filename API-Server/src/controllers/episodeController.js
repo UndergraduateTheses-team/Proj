@@ -3,6 +3,23 @@ import episodeSchema from "../validations/episodeValid.js";
 import fs from "fs";
 import dotenv from 'dotenv';
 dotenv.config();
+import pino from 'pino'
+import ecsFormat from '@elastic/ecs-pino-format'
+
+const transport = pino.transport({
+    target: 'pino/file',
+    options: { destination: "var/pinolog/log.json", mkdir: true, colorize: false }
+});
+const logger = pino({
+    level: 'info',
+    formatters: {
+        level: (label) => {
+            return { level: label.toUpperCase() };
+        }
+    },
+
+    timestamp: () => `,"time":"${new Date().toLocaleTimeString()}"` 
+}, transport, ecsFormat())
 
 export const getAllEpisodes = async (req, res) => {
   const { movieId } = req.params; // Lấy movieId từ params
@@ -26,6 +43,7 @@ export const createEpisodeForMovie = async (req, res) => {
   const { error } = episodeSchema.validate(episode);
   if (error) {
     console.log(error);
+    logger.error(error);
     return res.status(400).json({
       message: error.details[0].message,
       datas: [],
@@ -86,6 +104,7 @@ export const createEpisodeForMovie = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
+    logger.error(error);
     res.status(500).json({
       message: "Error creating episode",
       error: error.message,

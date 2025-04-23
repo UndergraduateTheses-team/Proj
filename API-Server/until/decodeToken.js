@@ -1,5 +1,22 @@
 import jwt from "jsonwebtoken";
 import User from "../src/models/users.js";
+import pino from 'pino'
+import ecsFormat from '@elastic/ecs-pino-format'
+
+const transport = pino.transport({
+    target: 'pino/file',
+    options: { destination: "var/pinolog/log.json", mkdir: true, colorize: false }
+});
+const logger = pino({
+    level: 'info',
+    formatters: {
+        level: (label) => {
+            return { level: label.toUpperCase() };
+        }
+    },
+
+    timestamp: () => `,"time":"${new Date().toLocaleTimeString()}"` 
+}, transport, ecsFormat())
 
 const protectRoute = async (req, res, next) => {
   try {
@@ -36,6 +53,7 @@ const protectRoute = async (req, res, next) => {
     next();
     } catch (err) {
         console.log(err);
+        logger.error(error);
         return res.status(500).json({ error: err });
     }
 };
