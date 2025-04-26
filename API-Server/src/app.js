@@ -66,7 +66,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 app.use(express.static(path.resolve(__dirname, "../static")));
 
 console.log("thu muc hien tai: ", __dirname);
-logger.info("thu muc hien tai: ", __dirname);
+logger.info(`thu muc hien tai: ${__dirname}`);
 app.use("/api", router);
 
 mongoose.connect(`${process.env.MONGODB_URI}`)

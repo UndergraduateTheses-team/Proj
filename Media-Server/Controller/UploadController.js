@@ -26,7 +26,7 @@ const uploadFile = (req, res) => {
         `${process.env.FQDN}/` +
         req.file.path.substring(req.file.path.indexOf("uploads"));
       console.log("filepath:", filePath);
-      logger.info("filepath:", filePath);
+      logger.info(`filepath: ${filePath}`);
       return res.status(201).json(filePath);
     } else {
       return res.status(400).json({
