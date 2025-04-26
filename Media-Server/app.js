@@ -7,6 +7,24 @@ import { fileURLToPath } from "url";
 import dotenv from 'dotenv';
 // import { Server } from "ws";
 dotenv.config();
+import pino from 'pino'
+import ecsFormat from '@elastic/ecs-pino-format'
+
+const transport = pino.transport({
+    target: 'pino/file',
+    options: { destination: process.env.destpinolog, mkdir: true, colorize: false }
+});
+const logger = pino({
+    level: 'info',
+    formatters: {
+        level: (label) => {
+            return { level: label.toUpperCase() };
+        }
+    },
+
+    timestamp: () => `,"time":"${new Date().toLocaleTimeString()}"` 
+}, transport, ecsFormat())
+
 const app = express();
 
 app.use(cors({
@@ -42,5 +60,6 @@ app.post("/uploads", upload.single("file"), uploadController);
 
 app.listen(process.env.PORT, () => {
   console.log(" Server run in server 8090");
+  logger.info(" Server run in server 8090");
 });
 
