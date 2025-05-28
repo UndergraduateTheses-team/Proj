@@ -9,25 +9,59 @@ import dotenv from 'dotenv';
 dotenv.config();
 import pino from 'pino'
 import ecsFormat from '@elastic/ecs-pino-format'
+import pinoHttp from 'pino-http'
+import pretty from 'pino-pretty'
 
 const transport = pino.transport({
-    target: 'pino/file',
-    options: { destination: process.env.destpinolog, mkdir: true, colorize: false }
+    targets: [
+
+      {
+        target: 'pino/file',
+        options: {
+          destination: process.env.destpinolog,
+          mkdir: true,
+          colorize: false
+        },
+        Level:'info'
+      },
+
+      {
+        target: 'pino-pretty',
+        options: { 
+          colorize: true,
+          destination: 1 
+        }
+      }
+  ]
 });
 const logger = pino({
     level: 'info',
     formatters: {
-        level: (label) => {
-            return { level: label.toUpperCase() };
+        level: (label, number) => {
+            return { 
+              level: number,
+              label: label.toUpperCase() 
+           };
         }
     },
 
     timestamp: () => `,"time":"${new Date().toLocaleTimeString()}"` 
 }, transport, ecsFormat())
 
+process.on('uncaughtException', (err) => {
+  logger.fatal({ err }, 'Uncaught exception, shutting down API-Server')
+  process.exit(1)
+})
 
+process.on('unhandledRejection', (reason) => {
+  logger.fatal({ reason }, 'Unhandled promise rejection, shutting down API-Server')
+  process.exit(1)
+})
+
+const httpLogger = pinoHttp({ logger })
 const app = express();
 
+app.use(httpLogger);
 app.use(express.json());
 
 app.use((req, res, next) => {
@@ -75,10 +109,31 @@ mongoose.connect(`${process.env.MONGODB_URI}`)
           logger.info("Connect to db success");
               })
         .catch(err => console.error("Failed to connect to DB:", err));
+
 app.listen(process.env.PORT, () => {
-  console.log("Server is running 8089 port");
-  logger.info("Server is running 8089 port");
+  console.log("Server is running on port 8089");
+  logger.info("Server is running on port 8089");
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // app.use(
 //   express.static(path.resolve(__dirname, "../build"), {
@@ -90,3 +145,14 @@ app.listen(process.env.PORT, () => {
 // app.get("*", (req, res) => {
 //   res.sendFile(path.resolve(__dirname, "../build/index.html"));
 // });
+
+
+//crash scheduled for pino test
+app.get('/crash', (req, res) => {
+  setTimeout(() => {
+
+    nonexistentFunction();
+  }, 0); 
+  res.send('Crash scheduled');
+});
+// throw new Error()
