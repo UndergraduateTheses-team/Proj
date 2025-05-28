@@ -46,7 +46,7 @@ function App() {
             <Route path="/favorite-film" element={<ListFavorite />} />
 
             <Route path="/profile" element={<Profile/>} />
-            <Route path="/changePass" element={<ChangePass/>} />
+            {/* <Route path="/changePass" element={<ChangePass/>} /> */} 
 
             <Route path="/filmsInfor/" element={<FilmInforPage />} />
             <Route path="/filmCreate/" element={<CreateFilmInfor />} />
