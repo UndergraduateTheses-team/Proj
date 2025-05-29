@@ -2,34 +2,56 @@ import User from "../models/users.js";
 import bcrypt from "bcryptjs";
 
 import { registerSchema } from "../validations/authValid.js";
-import generateTokenAndSetCookie from "../../until/gennerateToken.js";
+import generateTokenAndSetCookie from "../../utils/gennerateToken.js";
 import dotenv from 'dotenv';
 dotenv.config();
 import pino from 'pino'
 import ecsFormat from '@elastic/ecs-pino-format'
+import pinoHttp from 'pino-http'
+import pretty from 'pino-pretty'
 
 const transport = pino.transport({
-    target: 'pino/file',
-    options: { destination: process.env.destpinolog, mkdir: true, colorize: false }
+    targets: [
+
+      {
+        target: 'pino/file',
+        options: {
+          destination: process.env.destpinolog,
+          mkdir: true,
+          colorize: false
+        },
+        Level:'info'
+      },
+
+      {
+        target: 'pino-pretty',
+        options: { 
+          colorize: true,
+          destination: 1 
+        }
+      }
+  ]
 });
 const logger = pino({
     level: 'info',
     formatters: {
-        level: (label) => {
-            return { level: label.toUpperCase() };
+        level: (label, number) => {
+            return { 
+              level: number,
+              label: label.toUpperCase() 
+           };
         }
     },
 
     timestamp: () => `,"time":"${new Date().toLocaleTimeString()}"` 
 }, transport, ecsFormat())
 
-dotenv.config();
-
-  export const register = async (req, res) => {
+export const register = async (req, res) => {
     try {
       const { email, password } = req.body;
       const { error } = registerSchema.validate(req.body);
       if (error) {
+        
         return res.status(400).json({
           message: error.details[0].message,
           datas: [],

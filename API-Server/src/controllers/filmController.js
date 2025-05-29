@@ -9,22 +9,44 @@ import dotenv from 'dotenv';
 dotenv.config();
 import pino from 'pino'
 import ecsFormat from '@elastic/ecs-pino-format'
+import pinoHttp from 'pino-http'
+import pretty from 'pino-pretty'
 
 const transport = pino.transport({
-    target: 'pino/file',
-    options: { destination: process.env.destpinolog, mkdir: true, colorize: false }
+    targets: [
+
+      {
+        target: 'pino/file',
+        options: {
+          destination: process.env.destpinolog,
+          mkdir: true,
+          colorize: false
+        },
+        Level:'info'
+      },
+
+      {
+        target: 'pino-pretty',
+        options: { 
+          colorize: true,
+          destination: 1 
+        }
+      }
+  ]
 });
 const logger = pino({
     level: 'info',
     formatters: {
-        level: (label) => {
-            return { level: label.toUpperCase() };
+        level: (label, number) => {
+            return { 
+              level: number,
+              label: label.toUpperCase() 
+           };
         }
     },
 
     timestamp: () => `,"time":"${new Date().toLocaleTimeString()}"` 
 }, transport, ecsFormat())
-
 export const get = async (req, res) => {
   try {
     const film = await Film.find();

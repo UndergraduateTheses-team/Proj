@@ -6,7 +6,7 @@ import {
   postComment,
   updateComment,
 } from "../controllers/commentController.js";
-import protectRoute from "../../until/decodeToken.js";
+import protectRoute from "../../utils/decodeToken.js";
 const routerComment = express.Router();
 
 routerComment.get("/count/:id", getCountComments);

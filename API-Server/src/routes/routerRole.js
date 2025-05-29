@@ -7,8 +7,8 @@ import {
   remove,
 } from "../controllers/roleController.js";
 const routerRole = express.Router();
-import protectRoute from "../../until/decodeToken.js";
-import isAdmin from "../../until/checkIsAdmin.js";
+import protectRoute from "../../utils/decodeToken.js";
+import isAdmin from "../../utils/checkIsAdmin.js";
 
 routerRole.get("/", protectRoute, isAdmin, getall);
 routerRole.get("/:id", protectRoute, isAdmin, getDetail);

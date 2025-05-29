@@ -8,7 +8,7 @@ import {
   changePassword,
 } from "../controllers/userController.js";
 import upload from "../configs/multerConfig.js";
-import protectRoute from "../../until/decodeToken.js";
+import protectRoute from "../../utils/decodeToken.js";
 const routerUser = express.Router();
 
 routerUser.get("/", getAllUsers);

@@ -5,8 +5,8 @@ import {
   logout,
   register,
 } from "../controllers/authController.js";
-import isAdmin from "../../until/checkIsAdmin.js";
-import decodeToken from "../../until/decodeToken.js";
+import isAdmin from "../../utils/checkIsAdmin.js";
+import decodeToken from "../../utils/decodeToken.js";
 const routerAuth = express.Router();
 
 routerAuth.post("/register", register);

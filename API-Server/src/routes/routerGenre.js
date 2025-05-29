@@ -6,8 +6,8 @@ import {
   update,
   remove,
 } from "../controllers/genreController.js";
-import protectRoute from "../../until/decodeToken.js";
-import isAdmin from "../../until/checkIsAdmin.js";
+import protectRoute from "../../utils/decodeToken.js";
+import isAdmin from "../../utils/checkIsAdmin.js";
 const routerGenre = express.Router();
 
 routerGenre.get("/", getall);

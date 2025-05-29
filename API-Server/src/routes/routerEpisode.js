@@ -6,8 +6,8 @@ import {
   updateEpisodeForMovie,
 } from "../controllers/episodeController.js";
 import upload from "../configs/multerConfig.js";
-import protectRoute from "../../until/decodeToken.js";
-import isAdmin from "../../until/checkIsAdmin.js";
+import protectRoute from "../../utils/decodeToken.js";
+import isAdmin from "../../utils/checkIsAdmin.js";
 const routerEpisode = express.Router();
 
 routerEpisode.get("/:movieId", protectRoute, getAllEpisodes);
