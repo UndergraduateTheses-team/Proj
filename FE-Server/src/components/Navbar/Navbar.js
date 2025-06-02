@@ -8,12 +8,13 @@ import { useScrollY } from '../hook';
 import { Link, useParams } from 'react-router-dom';
 import UserDrop from '../userInfor/user';
 import useSearchFilm from '~/hooks/film/useSeachFilm';
+import { useNavigate } from 'react-router-dom';
 function Navbar() {
     const{id} = useParams();
     const [genresList, setGenresList] = useState([]);
     const [keyWord, setKeyWord] = useState('');
     const { searchFilms, searchResult } = useSearchFilm();
-    
+    const navigate = useNavigate();
     useEffect(() => {
         const getGenreList = async () => {
             const response = await fetch('/Api/api/genres/');
@@ -95,11 +96,10 @@ function Navbar() {
                                     />
                                 </div>
                             </Link>
-                            <Link to={'/login'}>
-                                <div className="navLogin">
-                                    <UserDrop />
-                                </div>
-                            </Link>
+                            <div className="navLogin" onClick={() => navigate('/login')} style={{ cursor: 'pointer' }}>
+                                <UserDrop />
+                            </div>
+
                         </div>
                     </div>
                 </div>
