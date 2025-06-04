@@ -6,6 +6,7 @@ import store from './components/store';
 import { BrowserRouter } from 'react-router-dom';
 import AuthContextProvider from './context/authContext';
 import { Toaster } from 'react-hot-toast';
+
 const container = document.getElementById('root');
 const root = createRoot(container);
 root.render(

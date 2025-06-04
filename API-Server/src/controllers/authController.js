@@ -5,53 +5,14 @@ import { registerSchema } from "../validations/authValid.js";
 import generateTokenAndSetCookie from "../../utils/gennerateToken.js";
 import dotenv from 'dotenv';
 dotenv.config();
-import pino from 'pino'
-import ecsFormat from '@elastic/ecs-pino-format'
-import pinoHttp from 'pino-http'
-import pretty from 'pino-pretty'
-
-const transport = pino.transport({
-    targets: [
-
-      {
-        target: 'pino/file',
-        options: {
-          destination: process.env.destpinolog,
-          mkdir: true,
-          colorize: false
-        },
-        Level:'info'
-      },
-
-      {
-        target: 'pino-pretty',
-        options: { 
-          colorize: true,
-          destination: 1 
-        }
-      }
-  ]
-});
-const logger = pino({
-    level: 'info',
-    formatters: {
-        level: (label, number) => {
-            return { 
-              level: number,
-              label: label.toUpperCase() 
-           };
-        }
-    },
-
-    timestamp: () => `,"time":"${new Date().toLocaleTimeString()}"` 
-}, transport, ecsFormat())
+import {logger} from "../../utils/logger.js"
 
 export const register = async (req, res) => {
     try {
       const { email, password } = req.body;
       const { error } = registerSchema.validate(req.body);
       if (error) {
-        
+        logger.error("Register user error: "+ error);
         return res.status(400).json({
           message: error.details[0].message,
           datas: [],
@@ -59,6 +20,7 @@ export const register = async (req, res) => {
       }
       const checkEmail = await User.findOne({ email });
       if (checkEmail) {
+        logger.error("Register user error: email existed.");
         return res.status(400).json({
           message: " Email da ton tai!",
         });
@@ -74,11 +36,13 @@ export const register = async (req, res) => {
       user.password = undefined;
 
       generateTokenAndSetCookie(user._id, res);
+      logger.info("Sign up successfully.");
       return res.status(200).json({
         message: " Dang ky thanh cong ",
         datas: user,
       });
     } catch (error) {
+      logger.error(error);
       return res.status(500).json({
         message: "loi sever",
       });

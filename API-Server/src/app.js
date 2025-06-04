@@ -8,7 +8,7 @@ import cookieParser from "cookie-parser";
 import dotenv from 'dotenv';
 dotenv.config();
 import pinoHttp from 'pino-http'
-import { logger } from "../utils/Logger.js"
+import { logger } from "../utils/logger.js"
 
 process.on('uncaughtException', (err) => {
   logger.fatal({ err }, 'Uncaught exception, shutting down API-Server')
@@ -80,23 +80,6 @@ app.listen(process.env.PORT, () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // app.use(
 //   express.static(path.resolve(__dirname, "../build"), {
 //     setHeaders: (res, path) => {
@@ -117,4 +100,8 @@ app.get('/crash', (req, res) => {
   }, 0); 
   res.send('Crash scheduled');
 });
+// app.get('/logreqres', (req, res) => {
+  
+//   res.send(req.params);
+// });
 // throw new Error()

@@ -5,28 +5,23 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from 'dotenv';
-// import { Server } from "ws";
+import pinoHttp from 'pino-http'
 dotenv.config();
-import pino from 'pino'
-import ecsFormat from '@elastic/ecs-pino-format'
+import { logger } from "./utils/logger.js";
 
-const transport = pino.transport({
-    target: 'pino/file',
-    options: { destination: process.env.destpinolog, mkdir: true, colorize: false }
-});
-const logger = pino({
-    level: 'info',
-    formatters: {
-        level: (label) => {
-            return { level: label.toUpperCase() };
-        }
-    },
+process.on('uncaughtException', (err) => {
+  logger.fatal({ err }, 'Uncaught exception, shutting down API-Server')
+  process.exit(1)
+})
 
-    timestamp: () => `,"time":"${new Date().toLocaleTimeString()}"` 
-}, transport, ecsFormat())
+process.on('unhandledRejection', (reason) => {
+  logger.fatal({ reason }, 'Unhandled promise rejection, shutting down API-Server')
+  process.exit(1)
+})
 
+const httpLogger = pinoHttp({ logger })
 const app = express();
-
+app.use(httpLogger);
 app.use(cors({
   origin: [
     `http://${process.env.API_SERVER}:8089`,
@@ -63,3 +58,12 @@ app.listen(process.env.PORT, () => {
   logger.info("Server is running on port 8090");
 });
 
+
+//crash scheduled for pino test
+app.get('/crash', (req, res) => {
+  setTimeout(() => {
+
+    nonexistentFunction();
+  }, 0); 
+  res.send('Crash scheduled');
+});
