@@ -9,7 +9,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import pinoHttp from 'pino-http'
 import { logger } from "../utils/logger.js"
-
+import { startDiskMonitor } from "../utils/checkdisk.js";
 process.on('uncaughtException', (err) => {
   logger.fatal({ err }, 'Uncaught exception, shutting down API-Server')
   process.exit(1)
@@ -100,6 +100,7 @@ app.listen(process.env.PORT, () => {
   logger.info("Server is running on port 8089");
 });
 
+startDiskMonitor();
 
 
 
