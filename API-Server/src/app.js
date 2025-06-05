@@ -20,7 +20,25 @@ process.on('unhandledRejection', (reason) => {
   process.exit(1)
 })
 
-const httpLogger = pinoHttp({ logger })
+const httpLogger = pinoHttp({
+    logger,
+    serializers: {
+      req: (req) => ({
+        method: req.method,
+        url: req.url,
+        headers: {
+            'OS platform': req.headers['sec-ch-ua-platform'],
+            'Browser':          req.headers['sec-ch-ua'],
+            'remoteAddress': req.remoteAddress,
+            'remotePort':    req.remotePort,
+          },
+    }),
+
+      res: (res) => ({
+        statusCode: res.statusCode,
+      }),
+    },
+})
 const app = express();
 
 app.use(httpLogger);
@@ -70,7 +88,12 @@ mongoose.connect(`${process.env.MONGODB_URI}`)
           console.log("Connect to db success");
           logger.info("Connect to db success");
               })
-        .catch(err => console.error("Failed to connect to DB:", err));
+        .catch(err => {
+          console.error("Failed to connect to DB:", err);
+          logger.error({err}, "Failed to connect to mongoDB.");
+        }
+          
+        );
 
 app.listen(process.env.PORT, () => {
   console.log("Server is running on port 8089");

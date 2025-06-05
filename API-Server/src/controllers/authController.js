@@ -5,14 +5,14 @@ import { registerSchema } from "../validations/authValid.js";
 import generateTokenAndSetCookie from "../../utils/gennerateToken.js";
 import dotenv from 'dotenv';
 dotenv.config();
-import {logger} from "../../utils/logger.js"
+import { logger } from "../../utils/logger.js"
 
 export const register = async (req, res) => {
     try {
       const { email, password } = req.body;
       const { error } = registerSchema.validate(req.body);
       if (error) {
-        logger.error("Register user error: "+ error);
+        logger.warn({tag : user-error},"Register user error: "+ error);
         return res.status(400).json({
           message: error.details[0].message,
           datas: [],
@@ -42,7 +42,7 @@ export const register = async (req, res) => {
         datas: user,
       });
     } catch (error) {
-      logger.error(error);
+      logger.error({error}, "Server error when registing account.");
       return res.status(500).json({
         message: "loi sever",
       });
@@ -52,6 +52,7 @@ export const register = async (req, res) => {
   export const login = async (req, res) => {
     try {
       const { email, password } = req.body;
+
       const checkEmail = await User.findOne({ email });
       if (!checkEmail) {
         return res.status(400).json({
@@ -74,6 +75,7 @@ export const register = async (req, res) => {
         data: checkEmail,
       });
     } catch (error) {
+      logger.error({error}, "Server error when user logging in account.")
       res.status(500).json({
         message: error.message,
       });
@@ -87,7 +89,7 @@ export const logout = (req, res) => {
     return res.status(200).json({ message: "Đăng xuất thành công" });
   } catch (err) {
     console.log(err);
-    logger.error(error);
+    logger.error({error}, "Server error when logging out account.");
     return res.status(500).json({ error: err });
   }
 };
@@ -100,6 +102,7 @@ export const allowAccess = async (req, res) => {
 
     return res.status(403).json({ message: " Chua du tu cach dau!" });
   } catch (error) {
+    logger.error({error}, "Server error with allowing access.")
     return res.status(500).json({ message: error.message });
   }
 };
