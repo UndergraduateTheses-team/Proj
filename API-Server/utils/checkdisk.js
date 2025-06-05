@@ -4,7 +4,7 @@ import path from "path";
 import { logger } from "./logger.js";
 
 const DISK_WARN_THRESHOLD = 0.80;
-const DISK_PATH = process.platform === "win32" ? "C:\\" : "/";
+const DISK_PATH = process.platform === "win32" ? "D:\\" : "/";
 
 async function checkDisk() {
   const { free, size } = await checkDiskSpace(DISK_PATH);
