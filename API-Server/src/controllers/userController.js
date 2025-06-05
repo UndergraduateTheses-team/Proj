@@ -97,11 +97,12 @@ export const updateUser = async (req, res) => {
 console.log("updatedUser:", updatedUser);
 
 if (!updatedUser) {
+    logger.warn({userid:req.user._id, userData},"Failed to update user")
       return res.status(400).json({
         message: "Cập nhật không thành công!",
       });
     }
-
+    logger.info({userid:req.user._id, userdata},"update user.")
     return res.status(200).json({
       message: "Cập nhật thành công người dùng",
       data: updatedUser,
@@ -126,6 +127,7 @@ export const editUser = async (req, res) => {
         isAdmin: req.body.isAdmin,
       }
     );
+    logger.info({username: req.body.name, email:req.params.user_email},"Success editing user.")
     res.status(200).json({
       success: true,
       message: "User edited successfully",
@@ -144,13 +146,14 @@ export const deleteUser = async (req, res) => {
     res.cookie("jwt", "", { maxAge: 0 });
     const { deletedCount } = await User.deleteOne({ _id: req.params.id });
     if (deletedCount === 0) {
+      logger.warn({userid: req.params.id},"User not found to be deleted")
       return res.status(404).json({
         success: false,
         message: "User not found",
       });
     }
     await Comment.deleteMany({ userId: req.params.id });
-    
+    logger.info({userid: req.params.id},"User deleted")
     res.status(200).json({
       success: true,
       message: "User deleted successfully",
@@ -177,17 +180,20 @@ const id = req.user._id;
           const salt = await bcrypt.genSalt(10);
           const hashNewPassword = await bcrypt.hash(newPassword, salt);
           await user.updateOne({ password: hashNewPassword });
+          logger.info({userid: user._id, username: req.user.name},"Changed password successfully")
           res.status(200).json({
             success: true,
             message: "Password reset successfully",
           });
         } else {
+          logger.warn({userid: user._id, username: req.user.name},"user Changed password failed due to incorrect old pass")
           res.status(400).json({
             success: false,
             message: "Incorrect old password",
           });
         }
       } else {
+        logger.warn({userid: user._id, username: req.user.name},"user Changed password failed due to user not found.")
         res.status(404).json({
           success: false,
           message: "User not found",

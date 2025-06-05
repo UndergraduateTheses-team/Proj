@@ -127,6 +127,7 @@ export const create = async (req, res) => {
     filmData.poster_img = data;
     const { error } = filmSchema.validate(filmData);
     if (error) {
+      logger.warn({error, filmData},"Validate film error when creating.")
       return res.status(400).json({
         message: error.details[0].message,
         datas: [],
@@ -135,12 +136,14 @@ export const create = async (req, res) => {
 
     const films = await Film.create(filmData);
     if (!films) {
+      logger.warn({error, filmData},"Admin failed to add film.")
       return res.status(400).json({
         message: " them khong thanh cong!",
       });
     }
 
     fs.unlinkSync(req.file.path);
+    logger.info({error, filmName: films.name, duration:films.movieDuration, descryption: films.description, releaseddate: films.releaseDate,Status: films.status, director: films.director, actor: films.actors, country: films.country, genre: films.genres},"admin successfully added film.")
     return res.status(200).json({
       message: " Them thanh cong bo phim",
       datas: films,
@@ -160,13 +163,13 @@ export const update = async (req, res) => {
     let filmData = req.body.film ? JSON.parse(req.body.film) : {};
 
     if (req.file) {
-      // Đọc tệp mới từ hệ thống tập tin
+
       const fileBuffer = fs.readFileSync(req.file.path);
       const blob = new Blob([fileBuffer], { type: req.file.mimetype });
       const formData = new FormData();
       formData.append("file", blob, req.file.filename);
 
-      // Tải tệp mới lên
+
       const response = await fetch(`${process.env.FQDN_MEDIA_SERVER}/uploads/`, {
         method: "POST",
         credentials: "include",
@@ -180,7 +183,7 @@ export const update = async (req, res) => {
       const data = await response.json();
       filmData.poster_img = data;
 
-      // Loại bỏ tệp cũ nếu một tệp mới được tải lên server
+
       const existingFilm = await Film.findById(id);
       if (existingFilm && existingFilm.poster_img) {
         const oldFilePath = `/path/to/uploaded/files/${existingFilm.poster_img.filename}`;
@@ -189,7 +192,7 @@ export const update = async (req, res) => {
         }
       }
 
-      // Xóa tệp vừa được tải lên từ vị trí tạm thời
+
       fs.unlinkSync(req.file.path);
     }
 
@@ -202,11 +205,12 @@ export const update = async (req, res) => {
     });
 
     if (!updatedFilm) {
+      logger.warn({userid:req.user.userId, username:req.user.name},"Update film failed.")
       return res.status(400).json({
         message: "Cập nhật không thành công!",
       });
     }
-
+    logger.info({filmdata,userid:req.user.userId, username:req.user.name }, "Updated film successfully.")
     return res.status(200).json({
       message: "Cập nhật thành công bộ phim",
       datas: updatedFilm,
@@ -225,10 +229,12 @@ export const remove = async (req, res) => {
   try {
     const films = await Film.findByIdAndDelete(req.params.id);
     if (!films) {
+      logger.warn({filmName: films.name},"Delete film failed.")
       return res.status(400).json({
         message: "Xoa khong thanh cong!",
       });
     }
+    logger.info({filmName: films.name},"Delete film success.")
     return res.status(200).json({
       message: " Xoa thanh cong bo phim",
       datas: films,

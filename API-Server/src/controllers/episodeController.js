@@ -29,6 +29,7 @@ export const createEpisodeForMovie = async (req, res) => {
   const episode = JSON.parse(req.body.info);
   const { error } = episodeSchema.validate(episode);
   if (error) {
+    logger.warn({error, episode, userid:req.userid}, "Episode validate error when trying to add episode for movie")
     console.log(error);
     return res.status(400).json({
       message: error.details[0].message,
@@ -80,11 +81,13 @@ export const createEpisodeForMovie = async (req, res) => {
       });
       await newEpisode.save();
       fs.unlinkSync(req.file.path);
+      logger.info({newEpisode, userid: req.userid}, "User created episode for movie. Check movieid in detail info.")
       return res.status(201).json({
         message: "Episode created successfully for the movie",
         data: newEpisode,
       });
     }
+    logger.warn({userid: req.userid},"req.file non exist. User failed to upload to database ")
     return res.status(400).json({
       message: "k up duoc video len db",
     });
@@ -109,6 +112,7 @@ export const createEpisodeForMovie = async (req, res) => {
 export const updateEpisodeForMovie = async (req, res) => {
   const { error } = episodeSchema.validate(req.body);
   if (error) {
+    logger.warn({error, user: req.user.name, userid: req.user.userid, name: req.user.name},"User faield to update episode for movie")
     return res.status(400).json({
       message: error.details[0].message,
       datas: [],
@@ -136,9 +140,10 @@ export const updateEpisodeForMovie = async (req, res) => {
     );
 
     if (!episode) {
+      logger.warn({user: req.user.name, userid: req.user.userid, name: req.user.name},"Episode not found, can't update episode.")
       return res.status(404).json({ message: "Episode not found" });
     }
-
+    logger.info({user: req.user.name, userid: req.user.userid, name: req.user.name},"User update episode successfully")
     res.status(200).json({
       message: "Episode updated successfully",
       data: episode,
@@ -164,9 +169,11 @@ export const deleteEpisodeForMovie = async (req, res) => {
 
   try {
     const result = await Episode.findByIdAndDelete(episodeId);
+    logger.warn({user: req.user.name, userid: req.user.userid, name: req.user.name},"Episode not found when trying to delete episode.")
     if (!result) {
       return res.status(404).json({ message: "Episode not found" });
     }
+    logger.info({user: req.user.name, userid: req.user.userid, name: req.user.name}, "Episode deleted by user.")
     res.status(200).json({ message: "Episode deleted successfully" });
   } catch (error) {
     logger.error({error:error,

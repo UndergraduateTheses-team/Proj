@@ -51,6 +51,7 @@ export const create = async (req, res) => {
   try {
     const { error } = genreSchema.validate(req.body);
     if (error) {
+      logger.warn({error, name: req.user.name, body: req.body},"adding genre failed due to validation.")
       return res.status(400).json({
         message: error.details[0].message,
         datas: [],
@@ -58,10 +59,12 @@ export const create = async (req, res) => {
     }
   genre = await Genres.create(req.body);
     if (!genre) {
+      logger.warn({body: req.body},"Failed to add genre to database")
       return res.status(400).json({
         message: " them the loai khong thanh cong!",
       });
     }
+    logger.info({name: req.user.name, body: req.body}, "User added genre successfully.")
     return res.status(200).json({
       message: " Them thanh cong the loai",
       datas: genre,
@@ -79,6 +82,7 @@ export const update = async (req, res) => {
   try {
     const { error } = genreSchema.validate(req.body);
     if (error) {
+      logger.warn({name: req.user.name, body: req.body}, "User failed to update genre due to validation.")
       return res.status(400).json({
         message: "loi",
       });
@@ -87,10 +91,12 @@ export const update = async (req, res) => {
       new: true,
     });
     if (!genre) {
+      logger.warn({name: req.user.name, body: req.body}, "User failed to update genre to database.")
       return res.status(400).json({
         message: "Cap nhat khong thanh cong!",
       });
     }
+    logger.info({name: req.user.name, body: req.body}, "User updated genre.")
     return res.status(200).json({
       message: "Cap nhat thanh cong!",
       datas: genre,
@@ -108,10 +114,12 @@ export const remove = async (req, res) => {
   try {
     genre = await Genres.findByIdAndDelete(req.params.id);
     if (!genre) {
+      logger.warn({name: req.user.name, genreid: req.params.id}, "User failed to remove genre.")
       return res.status(400).json({
         message: "Xoa khong thanh cong!",
       });
     }
+    logger.info({name: req.user.name, genreid: req.params.id}, "User successfully removing genre.")
     return res.status(200).json({
       message: " Xoa thanh cong bo phim",
       datas: genre,

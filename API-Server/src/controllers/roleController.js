@@ -50,6 +50,7 @@ export const create = async (req, res) => {
     try {
         const { error } = roleSchema.validate(req.body);
         if (error) {
+            logger.warn({error, body: req.body},"Create role failed due to validation.")
             return res.status(400).json({
                 message: error.details[0].message,
                 datas: [],
@@ -57,10 +58,12 @@ export const create = async (req, res) => {
         }
         role = await Role.create(req.body);
         if (!role) {
+            logger.warn({body: req.body},"Create role failed to add to database.")
             return res.status(400).json({
                 message: " them role moi khong thanh cong!",
             });
         }
+        logger.info({body: req.body},"Create role successfully.")
         return res.status(200).json({
             message: " Them thanh cong role",
             datas: role,
@@ -78,6 +81,7 @@ export const update = async (req, res) => {
     try {
         const { error } = roleSchema.validate(req.body);
         if (error) {
+            logger.warn({error, body: req.body},"Update role failed to validate.")
             return res.status(400).json({
                 message: error.details[0].message,
                 datas: [],
@@ -85,10 +89,12 @@ export const update = async (req, res) => {
         }
         role = await Role.findByIdAndUpdate(req.params.id, req.body);
         if (!role) {
+            logger.warn({body: req.body},"update role failed to update on DB.")
             return res.status(400).json({
                 message: "Cap nhat khong thanh cong!",
             });
         }
+        logger.info({body: req.body},"Update role successfully .")
         return res.status(200).json({
             message: "Cap nhat thanh cong",
             datas: role,
@@ -107,10 +113,12 @@ export const remove = async (req, res) => {
 
         role = await Role.findByIdAndDelete(req.params.id);
         if (!role) {
+            logger.warn({roleid: req.params.id},"Delete role failed due to not found .")
             return res.status(400).json({
                 message: "Xoa khong thanh cong!",
             });
         }
+        logger.info({roleid: req.params.id},"Delete role successfully .")
         return res.status(200).json({
             message: " Xoa thanh cong",
         });
