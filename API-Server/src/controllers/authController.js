@@ -42,7 +42,10 @@ export const register = async (req, res) => {
         datas: user,
       });
     } catch (error) {
-      logger.error({error}, "Server error when registing account.");
+      logger.error({
+        error: error, email: email,
+        },
+        "Server error when user trying to create an account.")
       return res.status(500).json({
         message: "loi sever",
       });
@@ -76,6 +79,10 @@ export const register = async (req, res) => {
       });
     } catch (error) {
       logger.error({error}, "Server error when user logging in account.")
+      logger.error({
+        error: error, email: email,
+        },
+        "Server error when user logging in account.")
       res.status(500).json({
         message: error.message,
       });
@@ -89,7 +96,10 @@ export const logout = (req, res) => {
     return res.status(200).json({ message: "Đăng xuất thành công" });
   } catch (err) {
     console.log(err);
-    logger.error({error}, "Server error when logging out account.");
+    logger.error({
+        error: error, email: email,
+        },
+        "Server error when logging out account.")
     return res.status(500).json({ error: err });
   }
 };
@@ -102,7 +112,7 @@ export const allowAccess = async (req, res) => {
 
     return res.status(403).json({ message: " Chua du tu cach dau!" });
   } catch (error) {
-    logger.error({error}, "Server error with allowing access.")
+    logger.error({error:error, user:req.user.name, email:req.user.email,}, "Server error with allowing access.")
     return res.status(500).json({ message: error.message });
   }
 };

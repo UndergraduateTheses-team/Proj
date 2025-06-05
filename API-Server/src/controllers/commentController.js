@@ -1,6 +1,6 @@
 import Comment from "../models/comment.js";
 import commentSchema from "../validations/commentValid.js";
-
+import { logger } from "../../utils/logger.js"
 export const getCommentByMovieId = async (req, res) => {
   try {
     const comments = await Comment.find({ movieId: req.params.id })
@@ -19,6 +19,7 @@ export const getCommentByMovieId = async (req, res) => {
       datas: comments,
     });
   } catch (error) {
+    logger.error({error}, "Server error getting comments of movie")
     return res.status(500).json({
       message: "Lỗi server",
     });
@@ -33,6 +34,8 @@ export const getCountComments = async (req, res) => {
       datas: count,
     });
   } catch (error) {
+    logger.error({error},
+      "Server error posting a comment.")
     return res.status(500).json({
       message: "Lỗi server",
     });
@@ -60,6 +63,10 @@ export const postComment = async (req, res) => {
       datas: newComment,
     });
   } catch (error) {
+    logger.error({
+      error: error, username: req.user.name, email: req.user.email,
+      },
+      "Server error posting a comment.")
     return res.status(500).json({
       message: "Lỗi server",
     });
@@ -90,6 +97,10 @@ export const updateComment = async (req, res) => {
       datas: updatedComment,
     });
   } catch (error) {
+    logger.error({
+      error: error, username: req.user.name, email: req.user.email,
+      },
+      "Server error updating a comment.")
     return res.status(500).json({
       message: "Lỗi server",
     });
@@ -109,6 +120,10 @@ export const deleteComment = async (req, res) => {
       datas: deletedComment,
     });
   } catch (error) {
+    logger.error({
+      error: error, username: req.user.name, email: req.user.email,
+      },
+      "Server error updating a comment.")
     return res.status(500).json({
       message: "Lỗi server",
     });
