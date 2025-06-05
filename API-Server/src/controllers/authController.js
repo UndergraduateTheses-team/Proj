@@ -12,7 +12,7 @@ export const register = async (req, res) => {
       const { email, password } = req.body;
       const { error } = registerSchema.validate(req.body);
       if (error) {
-        logger.warn({tag : user-error},"Register user error: "+ error);
+        logger.warn({tag : user-error, error, email},"Register error, wrong format.");
         return res.status(400).json({
           message: error.details[0].message,
           datas: [],
@@ -20,7 +20,7 @@ export const register = async (req, res) => {
       }
       const checkEmail = await User.findOne({ email });
       if (checkEmail) {
-        logger.error("Register user error: email existed.");
+        logger.warn({tag : user-error, email},"Register user error: email existed.");
         return res.status(400).json({
           message: " Email da ton tai!",
         });
@@ -36,7 +36,7 @@ export const register = async (req, res) => {
       user.password = undefined;
 
       generateTokenAndSetCookie(user._id, res);
-      logger.info("Sign up successfully.");
+      logger.info({userid: user._id, name: user.name, email: user.email, isAdmin: user.isAdmin},"Sign up successfully.");
       return res.status(200).json({
         message: " Dang ky thanh cong ",
         datas: user,
@@ -58,12 +58,14 @@ export const register = async (req, res) => {
 
       const checkEmail = await User.findOne({ email });
       if (!checkEmail) {
+        logger.warn({tag : user-error, email},"user Login with nonexisted email.");
         return res.status(400).json({
           message: " Email khong dung!",
         });
       }
       const checkPassword = await bcrypt.compare(password, checkEmail.password);
       if (!checkPassword) {
+        logger.warn({tag : user-error, email},"User gave wrong password for email.");
         return res.status(400).json({
           message: " Mat khau khong dung!",
         });
@@ -72,7 +74,7 @@ export const register = async (req, res) => {
       console.log("Generating token and setting cookie...");
       generateTokenAndSetCookie(checkEmail._id, res);
       checkEmail.password = undefined;
-
+      logger.info({email: req.body.email},"User signed in successfully.");
       return res.status(200).json({
         message: "Đăng nhập thành công",
         data: checkEmail,
@@ -92,6 +94,7 @@ export const logout = (req, res) => {
   try {
     res.cookie("jwt", "", { maxAge: 0 });
     console.log("Cookie cleared");
+    logger.info({email: req.body.email},"User logged out.");
     return res.status(200).json({ message: "Đăng xuất thành công" });
   } catch (err) {
     console.log(err);
@@ -106,10 +109,11 @@ export const logout = (req, res) => {
 export const allowAccess = async (req, res) => {
   try {
     if (req.user) {
+      logger.info({email : req.body.email},"Allow access for user.");
       return res.status(200).json({ message: "chap nhan truy cap" });
     }
-
-    return res.status(403).json({ message: " Chua du tu cach dau!" });
+    logger.warn({tag : user-error, email: req.body.email},"Access not allowed for user.");
+    return res.status(403).json({ message: "Access not allowed for user!" });
   } catch (error) {
     logger.error({error:error, user:req.user.name, email:req.user.email,}, "Server error with allowing access.")
     return res.status(500).json({ message: error.message });
