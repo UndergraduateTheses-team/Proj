@@ -7,49 +7,12 @@ import Genre from "../models/genres.js";
 import { error } from "console";
 import dotenv from 'dotenv';
 dotenv.config();
-import pino from 'pino'
-import ecsFormat from '@elastic/ecs-pino-format'
-import pinoHttp from 'pino-http'
-import pretty from 'pino-pretty'
+import { logger } from "../../utils/logger.js"
 
-const transport = pino.transport({
-    targets: [
-
-      {
-        target: 'pino/file',
-        options: {
-          destination: process.env.destpinolog,
-          mkdir: true,
-          colorize: false
-        },
-        Level:'info'
-      },
-
-      {
-        target: 'pino-pretty',
-        options: { 
-          colorize: true,
-          destination: 1 
-        }
-      }
-  ]
-});
-const logger = pino({
-    level: 'info',
-    formatters: {
-        level: (label, number) => {
-            return { 
-              level: number,
-              label: label.toUpperCase() 
-           };
-        }
-    },
-
-    timestamp: () => `,"time":"${new Date().toLocaleTimeString()}"` 
-}, transport, ecsFormat())
 export const get = async (req, res) => {
+  let film;
   try {
-    const film = await Film.find();
+    film = await Film.find();
     if (film.length === 0) {
       return res.status(400).json({
         message: " khong ton tai bo fiml nao!",
@@ -60,6 +23,7 @@ export const get = async (req, res) => {
       datas: film,
     });
   } catch (error) {
+    logger.error({error, film}, "Server error fetching all films.")
     return res.status(500).json({
       message: "loi sever",
     });
@@ -67,8 +31,9 @@ export const get = async (req, res) => {
 };
 
 export const getFilm = async (req, res) => {
+  let film;
   try {
-    let film = await Film.findOne({ _id: req.params.id });
+    film = await Film.findOne({ _id: req.params.id });
     if (!film) {
       return res.status(400).json({
         message: " khong ton tai bo film nao!",
@@ -81,7 +46,7 @@ export const getFilm = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    logger.error(error);
+    logger.error({error, film}, "Server error fetching a film.")
     return res.status(500).json({
       message: "loi sever",
     });
@@ -89,14 +54,14 @@ export const getFilm = async (req, res) => {
 };
 
 export const getDetail = async (req, res) => {
+  let film;
   try {
-    let film = await Film.findOne({ _id: req.params.id });
+    film = await Film.findOne({ _id: req.params.id });
     if (!film) {
       return res.status(400).json({
         message: " khong ton tai bo film nao!",
       });
     }
-
     await film.populate("genres");
 
     const currentView = film.viewed;
@@ -112,7 +77,7 @@ export const getDetail = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    logger.error(error);
+        logger.error({error, film}, "Server error fetching detail film.")
     return res.status(500).json({
       message: "loi sever",
     });
@@ -120,9 +85,10 @@ export const getDetail = async (req, res) => {
 };
 
 export const getFilmByGenresId = async (req, res) => {
+  let films;
   try {
     const { genreId } = req.body;
-    let films = await Film.find();
+    films = await Film.find();
 
     films = films.filter((film) => {
       if (film.genres.includes(genreId)) {
@@ -135,7 +101,7 @@ export const getFilmByGenresId = async (req, res) => {
     return res.status(200).json({ filmList: films, genreName: genre.name });
   } catch (error) {
     console.log(error);
-    logger.error(error);
+    logger.error({error, films}, "Server error fetching film by genres.")
     return res.status(500).json(error);
   }
 };
@@ -181,14 +147,12 @@ export const create = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    logger.error(error);
+    logger.error({error, filmData}, "Server error create a film.")
     return res.status(500).json({
       message: "loi sever",
     });
   }
 };
-
-
 
 export const update = async (req, res) => {
   try {
@@ -248,6 +212,7 @@ export const update = async (req, res) => {
       datas: updatedFilm,
     });
   } catch (error) {
+    logger.error({error, filmData}, "Server error updating detail film.")
     console.error("Lỗi khi cập nhật phim:", error);
     return res.status(500).json({
       message: "Lỗi server",
@@ -269,6 +234,7 @@ export const remove = async (req, res) => {
       datas: films,
     });
   } catch (error) {
+    logger.error({error, filmData}, "Server error remove film.")
     return res.status(500).json({
       message: "loi sever",
     });
@@ -298,7 +264,7 @@ export const followFilm = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    logger.error(error);
+    logger.error({error, userid: req.user._id, movieId }, "Server error tracking follow film of user.")
     return res.status(500).json({
       error: error.message,
     });
@@ -332,10 +298,11 @@ export const markEpisodeWatching = async (req, res) => {
 };
 
 export const getWatchingTime = async (req, res) => {
+  let history;
   try {
     const { episodeId } = req.body;
     
-    const history = await History.findOne({
+    history = await History.findOne({
       $and: [{ userId: req.user._id }, { episodeId: episodeId }],
     });
     if (!history) {
@@ -344,7 +311,7 @@ export const getWatchingTime = async (req, res) => {
     return res.status(200).json(history);
   } catch (error) {
     console.log(error);
-    logger.error(error);
+    logger.error({error, history}, "Server error tracking history/watching time of user.")
     return res.status(500).json({
       error: error.message,
     });
@@ -352,14 +319,15 @@ export const getWatchingTime = async (req, res) => {
 };
 
 export const getFilmByGenres = async (req, res) => {
+  let genre, films;
   try {
-    const genre = await Genre.findById(req.params.id);
+    genre = await Genre.findById(req.params.id);
 
     if (!genre) {
       return res.status(404).json({ message: "Không tìm thấy thể loại này" });
     }
 
-    const films = await Film.find({ genres: genre._id });
+    films = await Film.find({ genres: genre._id });
 
     if (films.length === 0) {
       return res
@@ -372,11 +340,13 @@ export const getFilmByGenres = async (req, res) => {
       .json({ message: "Tìm thành công phim", datas: films });
   } catch (error) {
     console.error(error.message);
+    logger.error({error, films, genre}, "Server error get film by genres of user.")
     return res.status(500).json({ message: "Lỗi server" });
   }
 };
 
 export const searchFilm = async (req, res) => {
+  let films;
   try {
     const { name } = req.body;
 
@@ -385,11 +355,12 @@ export const searchFilm = async (req, res) => {
     }
 
     // Search for films with names that contain the search term (case-insensitive)
-    const films = await Film.find({ name: new RegExp(name, "i") });
+    films = await Film.find({ name: new RegExp(name, "i") });
 
     res.status(200).json(films);
   } catch (error) {
     console.error("Error searching films:", error);
+    logger.error({error, films}, "Server error searching film.")
     res
       .status(500)
       .json({ message: "An error occurred while searching for films" });
@@ -397,10 +368,11 @@ export const searchFilm = async (req, res) => {
 };
 
 export const ratingFilm = async (req, res) => {
+  let film;
   try {
     const { star, movieId } = req.body;
     const userId = req.user._id;
-    const film = await Film.findById(movieId);
+    film = await Film.findById(movieId);
 
     // Tìm user
     const user = await User.findById(userId);
@@ -442,6 +414,7 @@ export const ratingFilm = async (req, res) => {
     return res.status(200).json(user);
   } catch (error) {
     console.error(error);
+    logger.error({error, userid: req.user._id, film}, "Server error about rating film of user.")
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -463,7 +436,7 @@ export const getRateOfUser = async (req, res) => {
     return res.status(200).json(user.rating[ratingIndex].rate);
   } catch (error) {
     console.log(error);
-    logger.error(error);
+    logger.error({error, userid: req.user._id}, "Server error get rate of user.")
     res.status(500).json({ message: "Internal server error" });
   }
 };

@@ -1,9 +1,11 @@
 import Role from "../models/roles.js";
 import roleSchema from "../validations/roleValid.js";
+import { logger } from "../../utils/logger.js"
 
 export const getall = async (req, res) => {
+    let role
     try {
-        const role = await Role.find();
+        role = await Role.find();
         if (role.length === 0) {
             return res.status(400).json({
                 message: " khong ton tai role nao!",
@@ -14,6 +16,7 @@ export const getall = async (req, res) => {
             datas: role,
         });
     } catch (error) {
+        logger.error({error, role},"server not getting all role")
         return res.status(500).json({
             message: "Loi sever",
         });
@@ -22,8 +25,9 @@ export const getall = async (req, res) => {
 };
 
 export const getDetail = async (req, res) => {
+    let role
     try {
-        const role = await Role.findById(req.params.id);
+        role = await Role.findById(req.params.id);
         if (!role) {
             return res.status(400).json({
                 message: " khong ton tai role nao!",
@@ -34,6 +38,7 @@ export const getDetail = async (req, res) => {
             datas: role,
         });
     } catch (error) {
+        logger.error({error, role},"server not getting detail role")
         return res.status(500).json({
             message: "loi sever",
         });
@@ -41,6 +46,7 @@ export const getDetail = async (req, res) => {
 };
 
 export const create = async (req, res) => {
+    let role
     try {
         const { error } = roleSchema.validate(req.body);
         if (error) {
@@ -49,7 +55,7 @@ export const create = async (req, res) => {
                 datas: [],
             });
         }
-        const role = await Role.create(req.body);
+        role = await Role.create(req.body);
         if (!role) {
             return res.status(400).json({
                 message: " them role moi khong thanh cong!",
@@ -60,6 +66,7 @@ export const create = async (req, res) => {
             datas: role,
         });
     } catch (error) {
+        logger.error({error, role},"server not creating a role")
         return res.status(500).json({
             message: "loi sever",
         });
@@ -67,6 +74,7 @@ export const create = async (req, res) => {
 };
 
 export const update = async (req, res) => {
+    let role
     try {
         const { error } = roleSchema.validate(req.body);
         if (error) {
@@ -75,7 +83,7 @@ export const update = async (req, res) => {
                 datas: [],
             });
         }
-        const role = await Role.findByIdAndUpdate(req.params.id, req.body);
+        role = await Role.findByIdAndUpdate(req.params.id, req.body);
         if (!role) {
             return res.status(400).json({
                 message: "Cap nhat khong thanh cong!",
@@ -86,6 +94,7 @@ export const update = async (req, res) => {
             datas: role,
         });
     } catch (error) {
+        logger.error({error, role},"server not updating role")
         return res.status(500).json({
             message: "loi sever",
         });
@@ -93,9 +102,10 @@ export const update = async (req, res) => {
 };
 
 export const remove = async (req, res) => {
+    let role
     try {
 
-        const role = await Role.findByIdAndDelete(req.params.id);
+        role = await Role.findByIdAndDelete(req.params.id);
         if (!role) {
             return res.status(400).json({
                 message: "Xoa khong thanh cong!",
@@ -105,6 +115,7 @@ export const remove = async (req, res) => {
             message: " Xoa thanh cong",
         });
     } catch (error) {
+        logger.error({error, role},"server not removing role")
         return res.status(500).json({
             message: "loi sever",
         });

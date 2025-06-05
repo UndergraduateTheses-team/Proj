@@ -6,14 +6,16 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const getAllUsers = async (req, res) => {
+  let users
   try {
-    const users = await User.find({}).select("-password");
+    users = await User.find({}).select("-password");
     res.status(200).json({
       success: true,
       message: "TIm thanh cong!",
       data: users,
     });
   } catch (error) {
+    logger.error({error, users}, "Server error getting all users")
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -22,10 +24,11 @@ export const getAllUsers = async (req, res) => {
 };
 
 export const getUserDetail = async (req, res) => {
+  let user
   try {
     const userId = req.user._id;
     // console.log("user:", req.user);
-    const user = await User.findOne({ _id:userId }).select("-password,-isAdmin,-favorite,-rating");
+    user = await User.findOne({ _id:userId }).select("-password,-isAdmin,-favorite,-rating");
     if (user) {
       res.status(200).json({
         success: true,
@@ -38,6 +41,7 @@ export const getUserDetail = async (req, res) => {
       });
     }
   } catch (error) {
+    logger.error({error, user}, "Server error getting user detail")
     console.error("Failed to retrieve user:", error);
     res.status(500).json({
       success: false,
@@ -49,9 +53,10 @@ export const getUserDetail = async (req, res) => {
 
 
 export const updateUser = async (req, res) => {
+  let userData
   try {
     const userId = req.user._id;
-    let userData = req.body.user ? JSON.parse(req.body.user) : {};
+    userData = req.body.user ? JSON.parse(req.body.user) : {};
 
     if (req.file) {
       const fileBuffer = fs.readFileSync(req.file.path);
@@ -102,6 +107,7 @@ if (!updatedUser) {
       data: updatedUser,
     });
   } catch (error) {
+    logger.error({error, userData}, "Server error updating user")
     console.error("Lỗi khi cập nhật người dùng:", error);
     return res.status(500).json({
       message: "Lỗi server",
@@ -125,6 +131,7 @@ export const editUser = async (req, res) => {
       message: "User edited successfully",
     });
   } catch (error) {
+    logger.error({error, email: req.params.user_email, name: req.body.name, isAdmin: req.body.isAdmin}, "Server error edit user")
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -149,6 +156,7 @@ export const deleteUser = async (req, res) => {
       message: "User deleted successfully",
     });
   } catch (error) {
+    logger.error({error, userid: req.params.id}, "Server error deleting a user")
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -187,6 +195,7 @@ const id = req.user._id;
       }
     } 
   } catch (error) {
+    logger.error({error}, "Server error changing password")
     res.status(500).json({
       success: false,
       message: "Server error",

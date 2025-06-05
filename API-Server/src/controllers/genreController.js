@@ -2,51 +2,12 @@ import Genres from "../models/genres.js";
 import genreSchema from "../validations/genresValid.js";
 import dotenv from 'dotenv';
 dotenv.config();
-import pino from 'pino'
-import ecsFormat from '@elastic/ecs-pino-format'
-import pinoHttp from 'pino-http'
-import pretty from 'pino-pretty'
-
-const transport = pino.transport({
-    targets: [
-
-      {
-        target: 'pino/file',
-        options: {
-          destination: process.env.destpinolog,
-          mkdir: true,
-          colorize: false
-        },
-        Level:'info'
-      },
-
-      {
-        target: 'pino-pretty',
-        options: { 
-          colorize: true,
-          destination: 1 
-        }
-      }
-  ]
-});
-const logger = pino({
-    level: 'info',
-    formatters: {
-        level: (label, number) => {
-            return { 
-              level: number,
-              label: label.toUpperCase() 
-           };
-        }
-    },
-
-    timestamp: () => `,"time":"${new Date().toLocaleTimeString()}"` 
-}, transport, ecsFormat())
+import { logger } from "../../utils/logger.js"
 
 export const getall = async (req, res) => {
-  
+  let genre
   try {
-    const genre = await Genres.find();
+    genre = await Genres.find();
     if (genre.length === 0) {
       return res.status(400).json({
         message: " khong ton tai the loai nao!",
@@ -57,6 +18,7 @@ export const getall = async (req, res) => {
       datas: genre,
     });
   } catch (error) {
+    logger.error({error, genre},"server error not getting all genres")
     return res.status(500).json({
       message: "Loi sever",
     });
@@ -64,8 +26,9 @@ export const getall = async (req, res) => {
 };
 
 export const getDetail = async (req, res) => {
+  let genre
   try {
-    const genre = await Genres.findById(req.params.id);
+    genre = await Genres.findById(req.params.id);
     if (!genre) {
       return res.status(400).json({
         message: " khong ton tai the loai nao!",
@@ -76,6 +39,7 @@ export const getDetail = async (req, res) => {
       datas: genre,
     });
   } catch (error) {
+    logger.error({error, genre},"server error not getting detail of genre")
     return res.status(500).json({
       message: "loi sever",
     });
@@ -83,7 +47,7 @@ export const getDetail = async (req, res) => {
 };
 
 export const create = async (req, res) => {
-  
+  let genre
   try {
     const { error } = genreSchema.validate(req.body);
     if (error) {
@@ -92,7 +56,7 @@ export const create = async (req, res) => {
         datas: [],
       });
     }
-    const genre = await Genres.create(req.body);
+  genre = await Genres.create(req.body);
     if (!genre) {
       return res.status(400).json({
         message: " them the loai khong thanh cong!",
@@ -103,6 +67,7 @@ export const create = async (req, res) => {
       datas: genre,
     });
   } catch (error) {
+    logger.error({error, genre},"server error not creating genre")
     return res.status(500).json({
       message: "loi sever",
     });
@@ -110,6 +75,7 @@ export const create = async (req, res) => {
 };
 
 export const update = async (req, res) => {
+  let genre
   try {
     const { error } = genreSchema.validate(req.body);
     if (error) {
@@ -117,7 +83,7 @@ export const update = async (req, res) => {
         message: "loi",
       });
     }
-    const genre = await Genres.findByIdAndUpdate(req.params.id, req.body, {
+    genre = await Genres.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
     if (!genre) {
@@ -130,6 +96,7 @@ export const update = async (req, res) => {
       datas: genre,
     });
   } catch (error) {
+    logger.error({error, genre},"server error not updating of genre")
     return res.status(500).json({
       message: "loi sever",
     });
@@ -137,8 +104,9 @@ export const update = async (req, res) => {
 };
 
 export const remove = async (req, res) => {
+  let genre
   try {
-    const genre = await Genres.findByIdAndDelete(req.params.id);
+    genre = await Genres.findByIdAndDelete(req.params.id);
     if (!genre) {
       return res.status(400).json({
         message: "Xoa khong thanh cong!",
@@ -149,6 +117,7 @@ export const remove = async (req, res) => {
       datas: genre,
     });
   } catch (error) {
+    logger.error({error, genre},"server error not deleting genre")
     return res.status(500).json({
       message: "loi sever",
     });
@@ -156,11 +125,12 @@ export const remove = async (req, res) => {
 };
 
 export const getGenresOfFilm = async (genresId) => {
+  let genres
   try {
-    const genres = await Genres.find({ _id: { $in: genresId } });
+    genres = await Genres.find({ _id: { $in: genresId } });
     return genres;
   } catch (error) {
+    logger.error({error, genre},"server error not getting genre of a film")
     console.log(error);
-    logger.error(error);
   }
 };

@@ -43,7 +43,7 @@ export const register = async (req, res) => {
       });
     } catch (error) {
       logger.error({
-        error: error, email: email,
+        error: error, email: req.body.email,
         },
         "Server error when user trying to create an account.")
       return res.status(500).json({
@@ -78,9 +78,8 @@ export const register = async (req, res) => {
         data: checkEmail,
       });
     } catch (error) {
-      logger.error({error}, "Server error when user logging in account.")
       logger.error({
-        error: error, email: email,
+        error: error, email: req.body.email,
         },
         "Server error when user logging in account.")
       res.status(500).json({
@@ -97,7 +96,7 @@ export const logout = (req, res) => {
   } catch (err) {
     console.log(err);
     logger.error({
-        error: error, email: email,
+        error: err, email: req.body.email,
         },
         "Server error when logging out account.")
     return res.status(500).json({ error: err });

@@ -3,49 +3,11 @@ import episodeSchema from "../validations/episodeValid.js";
 import fs from "fs";
 import dotenv from 'dotenv';
 dotenv.config();
-import pino from 'pino'
-import ecsFormat from '@elastic/ecs-pino-format'
-import pinoHttp from 'pino-http'
-import pretty from 'pino-pretty'
+import { logger } from "../../utils/logger.js"
 
-const transport = pino.transport({
-    targets: [
 
-      {
-        target: 'pino/file',
-        options: {
-          destination: process.env.destpinolog,
-          mkdir: true,
-          colorize: false
-        },
-        Level:'info'
-      },
-
-      {
-        target: 'pino-pretty',
-        options: { 
-          colorize: true,
-          destination: 1 
-        }
-      }
-  ]
-});
-const logger = pino({
-    level: 'info',
-    formatters: {
-        level: (label, number) => {
-            return { 
-              level: number,
-              label: label.toUpperCase() 
-           };
-        }
-    },
-
-    timestamp: () => `,"time":"${new Date().toLocaleTimeString()}"` 
-}, transport, ecsFormat())
 export const getAllEpisodes = async (req, res) => {
-  const { movieId } = req.params; // Lấy movieId từ params
-
+  const { movieId } = req.params;
   try {
     const episodes = await Episode.find({ movieId });
     res.status(200).json({
@@ -53,6 +15,9 @@ export const getAllEpisodes = async (req, res) => {
       data: episodes,
     });
   } catch (error) {
+    logger.error({error:error, 
+      movieId: req.params.movieId,   
+    }, "Server error getting all episodes failed")
     res.status(500).json({
       message: "Error fetching episodes",
       error: error.message,
@@ -65,7 +30,6 @@ export const createEpisodeForMovie = async (req, res) => {
   const { error } = episodeSchema.validate(episode);
   if (error) {
     console.log(error);
-    logger.error(error);
     return res.status(400).json({
       message: error.details[0].message,
       datas: [],
@@ -126,7 +90,15 @@ export const createEpisodeForMovie = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    logger.error(error);
+    logger.error({error:error, 
+        movieId: req.params.movieId,
+        episodeId: episode.episodeId,
+        name_episode: episode.name_episode,
+        episode_number: episode.episode_number,
+        videoUrl: filePath,
+    },
+      
+      "Server error creating new episode.")
     res.status(500).json({
       message: "Error creating episode",
       error: error.message,
@@ -172,6 +144,14 @@ export const updateEpisodeForMovie = async (req, res) => {
       data: episode,
     });
   } catch (error) {
+      logger.error({error:error, 
+          updateData: updateData,
+          episodeId: episodeId,
+          episode_number: episode_number,
+          name_episode: name_episode,
+      },
+        
+        "Server error updating new episode.")
     res.status(500).json({
       message: "Error updating episode",
       error: error.message,
@@ -189,6 +169,13 @@ export const deleteEpisodeForMovie = async (req, res) => {
     }
     res.status(200).json({ message: "Episode deleted successfully" });
   } catch (error) {
+    logger.error({error:error,
+        episodeId: req.params.episodeId, 
+        name_episode: req.params.name_episode,
+        episode_number: req.params.episode_number,
+      },
+        
+      "Server error deleting episode.")
     res.status(500).json({
       message: "Error deleting episode",
       error: error.message,
