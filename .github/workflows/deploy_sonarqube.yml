@@ -32,6 +32,7 @@ jobs:
         run: |
           sonar-scanner \
             -Dsonar.projectKey=fe \
+            -Dsonar.organization=undergraduatetheses-team \
             -Dsonar.sources=. \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=$SONAR_TOKEN
