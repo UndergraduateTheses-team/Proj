@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install dependencies (optional if using JS/TS)
+      - name: Install dependencies
         run: npm install
 
       - name: Install SonarQube Scanner
@@ -31,7 +31,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           sonar-scanner \
-            -Dsonar.projectKey=fe \
+            -Dsonar.projectKey=undergraduatetheses-team_Proj \
             -Dsonar.organization=undergraduatetheses-team \
             -Dsonar.sources=. \
             -Dsonar.host.url=https://sonarcloud.io \
