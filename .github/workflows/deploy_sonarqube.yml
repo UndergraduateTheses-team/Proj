@@ -33,5 +33,5 @@ jobs:
         sonar-scanner \
           -Dsonar.projectKey=fe \
           -Dsonar.sources=. \
-          -Dsonar.host.url=https://huahogiahuy.nguyenvandat.phimvibez.asia \
+          -Dsonar.host.url=https://huahogiahuy-nguyenvandat.id.vn \
           -Dsonar.login=$SONAR_TOKEN
