@@ -12,26 +12,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-    - name: Install dependencies (optional if using JS/TS)
-      run: npm install
+      - name: Install dependencies (optional if using JS/TS)
+        run: npm install
 
-    - name: Install SonarQube Scanner
-      run: npm install -g sonar-scanner
+      - name: Install SonarQube Scanner
+        run: npm install -g sonar-scanner
 
-    - name: Run SonarQube Scan
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: |
-        sonar-scanner \
-          -Dsonar.projectKey=fe \
-          -Dsonar.sources=. \
-          -Dsonar.host.url=https://huahogiahuy-nguyenvandat.id.vn \
-          -Dsonar.login=$SONAR_TOKEN
+      - name: Run SonarQube Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=fe \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=https://YOUR_SONARQUBE_SERVER_URL \
+            -Dsonar.login=$SONAR_TOKEN
