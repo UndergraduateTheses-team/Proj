@@ -35,5 +35,9 @@ yarn-error.log*
 
 # Ignore Windows log JSON files
 **/log/*.json
+../API-Server/D:/Users/ASUS/Documents/log/*.json
+../Media-Server/D:/Users/ASUS/Documents/log/*.json
+../API-Server/D:\\Users\\ASUS\\Documents\\log\\pinoOutput-app-api.json
+../Media-Server/D:\\Users\\ASUS\\Documents\\log\\pinoOutput-app-media-server.json
 # Ignore uploads folder
 Media-Server/static/uploads/
