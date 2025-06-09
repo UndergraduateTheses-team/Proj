@@ -14,8 +14,8 @@ spec:
       labels:
         app: backend
     spec:
-      nodeSelector:
-        role: backend # Schedule pods only on nodes with this label
+      # nodeSelector:
+      #   role: backend # Schedule pods only on nodes with this label
       containers:
       - name: backend
         image: be:latest

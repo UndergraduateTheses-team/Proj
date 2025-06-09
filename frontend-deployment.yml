@@ -14,8 +14,8 @@ spec:
       labels:
         app: react-app
     spec:
-      nodeSelector:
-        role: frontend # Schedule pods only on nodes with this label
+      # nodeSelector:
+      #   role: frontend # Schedule pods only on nodes with this label
       containers:
       - name: react-app
         image: asia-southeast1-docker.pkg.dev/lexical-aquifer-445708-u1/docker-registry/fe:latest
