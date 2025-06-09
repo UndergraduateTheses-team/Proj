@@ -17,7 +17,7 @@ ENV GITHUB_REF=$GITHUB_REF
 WORKDIR /app
 
 # Copy only dependency files first for better caching
-COPY Server/package*.json ./
+COPY API-Server/package*.json ./
 
 # Install dependencies
 RUN npm ci
