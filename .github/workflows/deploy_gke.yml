@@ -44,24 +44,24 @@ jobs:
           location: ${{ env.GKE_REGION }}
           project_id: ${{ secrets.GKE_PROJECT }}
 
-      - name: Build Frontend Docker image
-        run: |
-          docker build \
-            --tag "${{ env.GAR_ZONE }}-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/${{ env.GAR_REPO }}/${{ env.IMAGE_FE }}:${{ env.IMAGE_TAG }}" \
-            --build-arg GITHUB_SHA="$GITHUB_SHA" \
-            --build-arg GITHUB_REF="$GITHUB_REF" \
-            --build-arg PORT=${{ secrets.PORT }} \
-            -f Dockerfile.fe .
+      # - name: Build Frontend Docker image
+      #   run: |
+      #     docker build \
+      #       --tag "${{ env.GAR_ZONE }}-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/${{ env.GAR_REPO }}/${{ env.IMAGE_FE }}:${{ env.IMAGE_TAG }}" \
+      #       --build-arg GITHUB_SHA="$GITHUB_SHA" \
+      #       --build-arg GITHUB_REF="$GITHUB_REF" \
+      #       --build-arg PORT=${{ secrets.PORT }} \
+      #       -f Dockerfile.fe .
 
-      - name: Build Backend Docker image
-        run: |
-          docker build \
-            --tag "${{ env.GAR_ZONE }}-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/${{ env.GAR_REPO }}/${{ env.IMAGE_BE }}:${{ env.IMAGE_TAG }}" \
-            --build-arg GITHUB_SHA="$GITHUB_SHA" \
-            --build-arg GITHUB_REF="$GITHUB_REF" \
-            --build-arg SERVER_UPLOAD_URL=${{ secrets.SERVER_UPLOAD_URL }} \
-            --build-arg MONGODB_URI=${{ secrets.MONGODB_URI }} \
-            -f Dockerfile.be .
+      # - name: Build Backend Docker image
+      #   run: |
+      #     docker build \
+      #       --tag "${{ env.GAR_ZONE }}-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/${{ env.GAR_REPO }}/${{ env.IMAGE_BE }}:${{ env.IMAGE_TAG }}" \
+      #       --build-arg GITHUB_SHA="$GITHUB_SHA" \
+      #       --build-arg GITHUB_REF="$GITHUB_REF" \
+      #       --build-arg SERVER_UPLOAD_URL=${{ secrets.SERVER_UPLOAD_URL }} \
+      #       --build-arg MONGODB_URI=${{ secrets.MONGODB_URI }} \
+      #       -f Dockerfile.be .
 
       - name: Trivy Security Scan
         run: |
