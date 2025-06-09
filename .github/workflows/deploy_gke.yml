@@ -90,5 +90,5 @@ jobs:
 
       - name: Deploy to GKE
         run: |
-          kubectl apply -f frontend-deployment.yml -f backend-deployment.yml -f service.yaml -n default
-          kubectl get pods -n default
+          # kubectl apply -f frontend-deployment.yml -f backend-deployment.yml -f service.yaml -n default
+          # kubectl get pods -n default
