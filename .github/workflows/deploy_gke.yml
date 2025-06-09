@@ -9,7 +9,7 @@ on:
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   GKE_CLUSTER: autopilot-cluster-1
-  GKE_REGION: asia-southeast1  # ✅ Changed from zone to region
+  GKE_REGION: asia-southeast1  
   IMAGE_FE: fe
   IMAGE_BE: be
   IMAGE_TAG: latest
@@ -41,7 +41,7 @@ jobs:
         uses: google-github-actions/get-gke-credentials@v2.3.0
         with:
           cluster_name: ${{ env.GKE_CLUSTER }}
-          location: ${{ env.GKE_REGION }}  # ✅ Must be region for Autopilot
+          location: ${{ env.GKE_REGION }}  
           project_id: ${{ env.PROJECT_ID }}
 
       - name: Build Frontend Docker image
