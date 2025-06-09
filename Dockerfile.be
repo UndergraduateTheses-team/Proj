@@ -23,7 +23,7 @@ COPY Server/package*.json ./
 RUN npm ci
 
 # Copy the full backend source code
-COPY Server/ .
+COPY API-Server/ .
 
 # Expose the app port (change if not 3000)
 EXPOSE 3000
