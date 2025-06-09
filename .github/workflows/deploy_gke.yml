@@ -88,7 +88,18 @@ jobs:
           docker push "${{ env.GAR_ZONE }}-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/${{ env.GAR_REPO }}/${{ env.IMAGE_FE }}:${{ env.IMAGE_TAG }}"
           docker push "${{ env.GAR_ZONE }}-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/${{ env.GAR_REPO }}/${{ env.IMAGE_BE }}:${{ env.IMAGE_TAG }}"
 
-      # - name: Deploy to GKE
-      #   run: |
-      #     kubectl apply -f frontend-deployment.yml -f backend-deployment.yml -f service.yaml -n default
-      #     kubectl get pods -n default
+      - name: Show deployment files (debug)
+        run: |
+          echo "--- Frontend Deployment ---"
+          cat frontend-deployment.yml || echo "frontend-deployment.yml not found"
+          echo "--- Backend Deployment ---"
+          cat backend-deployment.yml || echo "backend-deployment.yml not found"
+          echo "--- Service ---"
+          cat service.yaml || echo "service.yaml not found"
+
+      - name: Deploy to GKE
+        run: |
+          kubectl apply -f frontend-deployment.yml -f backend-deployment.yml -f service.yaml -n default
+          kubectl rollout status deployment/frontend-deployment -n default
+          kubectl rollout status deployment/backend-deployment -n default
+
