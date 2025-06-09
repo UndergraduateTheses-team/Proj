@@ -88,7 +88,7 @@ jobs:
           docker push "${{ env.GAR_ZONE }}-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/${{ env.GAR_REPO }}/${{ env.IMAGE_FE }}:${{ env.IMAGE_TAG }}"
           docker push "${{ env.GAR_ZONE }}-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/${{ env.GAR_REPO }}/${{ env.IMAGE_BE }}:${{ env.IMAGE_TAG }}"
 
-      - name: Deploy to GKE
-        run: |
-          kubectl apply -f frontend-deployment.yml -f backend-deployment.yml -f service.yaml -n default
-          kubectl get pods -n default
+      # - name: Deploy to GKE
+      #   run: |
+      #     kubectl apply -f frontend-deployment.yml -f backend-deployment.yml -f service.yaml -n default
+      #     kubectl get pods -n default
