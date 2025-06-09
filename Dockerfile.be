@@ -20,7 +20,7 @@ WORKDIR /app
 COPY API-Server/package*.json ./
 
 # Install dependencies
-RUN npm ci
+RUN npm install
 
 # Copy the full backend source code
 COPY API-Server/ .
