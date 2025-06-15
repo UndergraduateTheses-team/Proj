@@ -10,12 +10,13 @@ import DenyAccess from '~/components/access/403';
 import NavbarAdmin from '~/components/Navbar/NavbarAdmin';
 
 function FilmInforPage() {
-    const {id}= useParams();
+    const { id } = useParams();
     const { allowAccess } = useContext(UserContext);
     const { filmList } = useGetAllFilm();
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const { deleteFilm } = useDeleteFilm(id);
     const [selectedId, setSelectedId] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const handleDelete = (id) => {
         setSelectedId(id);
@@ -24,48 +25,63 @@ function FilmInforPage() {
 
     const confirmDelete = async () => {
         await deleteFilm(selectedId);
-        setSelectedId(null);
         setShowConfirmDialog(false);
+        window.location.reload(); // Temporary refresh
     };
 
     const cancelDelete = () => {
         setShowConfirmDialog(false);
     };
 
+    const filteredFilms = filmList.filter(film =>
+        film.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
-        <TableContainer>
+        <CinematicContainer>
             {allowAccess ? (
                 <>
                     <NavbarAdmin />
-                    <div className="container">
-                        <div className="header">
-                            <button className="createButton">
-                                <Link to="/filmCreate">Create New</Link>
-                            </button>
+                    <div className="content">
+                        <h1 className="title">Anime Film Vault</h1>
+                        <div className="controls">
+                            <input
+                                type="text"
+                                placeholder="Search films..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="searchBar"
+                            />
+                            <Link to="/filmCreate">
+                                <button className="addButton">Add New Film</button>
+                            </Link>
                         </div>
-                        <table>
+                        <FilmTable>
                             <thead>
-                                <tr className="main">
-                                    <th>Film Info</th>
-                                    <th>Action</th>
+                                <tr>
+                                    <th>FILM TITLE</th>
+                                    <th>ACTIONS</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {filmList.map((filmInfo) => (
+                                {filteredFilms.map((filmInfo) => (
                                     <tr key={filmInfo._id}>
                                         <td>{filmInfo.name}</td>
                                         <td>
-                                            <button className="editButton">
-                                                <Link to={`/film/edit/${filmInfo._id}`}>Edit</Link>
-                                            </button>
-                                            <button className="deleteButton" onClick={() => handleDelete(filmInfo._id)}>
+                                            <Link to={`/film/edit/${filmInfo._id}`}>
+                                                <button className="editButton">Edit</button>
+                                            </Link>
+                                            <button
+                                                className="deleteButton"
+                                                onClick={() => handleDelete(filmInfo._id)}
+                                            >
                                                 Delete
                                             </button>
                                         </td>
                                     </tr>
                                 ))}
                             </tbody>
-                        </table>
+                        </FilmTable>
                     </div>
                     <Footer />
                 </>
@@ -74,116 +90,124 @@ function FilmInforPage() {
             )}
             {showConfirmDialog && (
                 <ConfirmDialog
-                    message="Are you sure you want to delete?"
+                    message="Are you sure you want to delete this film?"
                     onConfirm={confirmDelete}
                     onCancel={cancelDelete}
                 />
             )}
-        </TableContainer>
+        </CinematicContainer>
     );
 }
 
 export default FilmInforPage;
 
-const TableContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100vh;
+const CinematicContainer = styled.div`
+    background: linear-gradient(to bottom, #1a1a2e, #16213e);
+    min-height: 100vh;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
 
-    .container {
-        width: 80%;
-        display: flex;
-        flex-direction: column;
-        align-self: center;
-        padding-bottom: 25px;
-        
-        padding-top: 275px;
+    .content {
+        padding: 80px 40px 40px; /* Increased top padding to 80px to avoid overlap with Navbar */
+        max-width: 1200px;
+        margin: 0 auto;
     }
 
-    .header {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+    .title {
+        text-align: center;
+        font-size: 2rem;
+        color: #ff4040;
+        text-transform: uppercase;
+        margin-bottom: 20px;
     }
 
-    .createButton {
-        background-color: #4caf50;
-        padding: 1rem;
+    .controls {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .searchBar {
+        padding: 10px;
+        width: 300px;
         border: none;
         border-radius: 5px;
-        cursor: pointer;
+        background-color: #2a2a3a;
+        color: #fff;
         font-size: 1rem;
-
-        a {
-            text-decoration: none;
-            color: white;
-            padding: 1rem;
-        }
     }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 2rem 0;
-        font-size: 1rem;
-        text-align: left;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        background-color: #fff;
-        
-    }
-
-    thead {
-        background-color: #4caf50;
+    .addButton {
+        background-color: #ff5555;
         color: white;
-    }
-
-    th,
-    td {
-        padding: 1rem;
-        border: 1px solid #ddd;
-    }
-
-    tr:nth-child(even) {
-        background-color: #f2f2f2;
-    }
-
-    .main:hover {
-        background-color: #267d29;
-    }
-
-    tr:hover {
-        background-color: #e9e9e9;
-    }
-
-    button {
-        padding: 0.5em 1em;
+        padding: 10px 20px;
         border: none;
         border-radius: 5px;
         cursor: pointer;
         font-size: 1rem;
-        margin-right: 0.5em;
-        display: inline-block;
+        transition: background-color 0.3s;
 
-        a {
-            text-decoration: none;
-            color: white;
+        &:hover {
+            background-color: #e60000;
         }
+    }
+
+    a {
+        text-decoration: none;
+    }
+`;
+
+const FilmTable = styled.table`
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #1e1e2f;
+
+    th, td {
+        padding: 15px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #ff4040;
+        color: white;
+        text-transform: uppercase;
+    }
+
+    td {
+        background-color: #2a2a3a;
+        border-bottom: 1px solid #3a3a4a;
+    }
+
+    tr:hover td {
+        background-color: #3a3a4a;
     }
 
     .editButton {
-        background-color: #2196f3;
+        background-color: #4caf50;
+        color: white;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: 10px;
+        transition: background-color 0.3s;
+
+        &:hover {
+            background-color: #45a049;
+        }
     }
 
     .deleteButton {
         background-color: #f44336;
-    }
-
-    .editButton a {
         color: white;
-    }
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
 
-    .deleteButton a {
-        color: white;
+        &:hover {
+            background-color: #da190b;
+        }
     }
 `;
