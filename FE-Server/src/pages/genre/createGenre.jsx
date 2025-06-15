@@ -2,11 +2,9 @@ import React, { useState, useContext } from 'react';
 import useCreateGenres from '~/hooks/genre/useCreateGenres';
 import { UserContext } from '~/context/authContext';
 import styled from 'styled-components';
-
 import Footer from '~/components/footer/Footer';
 import DenyAccess from '~/components/access/403';
 import NavbarAdmin from '~/components/Navbar/NavbarAdmin';
-import { FaPlus } from 'react-icons/fa';
 
 function CreateGenre() {
     const [genre, setGenre] = useState('');
@@ -22,115 +20,114 @@ function CreateGenre() {
     };
 
     return (
-        <GenresWrapper>
-            {allowAccess ? (
-                <>
-                    <NavbarAdmin />
-                    <FormSection>
-                        <Card>
+        <CinematicContainer>
+            <NavbarAdmin />
+            <ContentArea>
+                {allowAccess ? (
+                    <>
+                        <CreationCard>
                             <h1>Create New Genre</h1>
-                            <p>Fill in the name of the new genre you want to add.</p>
-                            <form onSubmit={handleSubmit}>
-                                <input
+                            <Description>Enter the name of the new genre to add.</Description>
+                            <GenreForm onSubmit={handleSubmit}>
+                                <GenreInput
                                     type="text"
                                     placeholder="Enter genre name..."
                                     value={genre}
                                     onChange={(e) => setGenre(e.target.value)}
                                     required
                                 />
-                                <button type="submit" disabled={loading}>
-                                    <FaPlus /> {loading ? 'Creating...' : 'Create Genre'}
-                                </button>
-                            </form>
-                        </Card>
-                    </FormSection>
-                    <Footer />
-                </>
-            ) : (
-                <DenyAccess />
-            )}
-        </GenresWrapper>
+                                <SubmitButton type="submit" disabled={loading}>
+                                    {loading ? 'Creating...' : 'Add Genre'}
+                                </SubmitButton>
+                            </GenreForm>
+                        </CreationCard>
+                    </>
+                ) : (
+                    <DenyAccess />
+                )}
+            </ContentArea>
+            <Footer />
+        </CinematicContainer>
     );
 }
 
 export default CreateGenre;
 
-// Styled Components
-const GenresWrapper = styled.div`
+const CinematicContainer = styled.div`
+    background: linear-gradient(to bottom, #1a1a2e, #16213e);
     min-height: 100vh;
-    background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-    color: white;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
 `;
 
-const FormSection = styled.div`
+const ContentArea = styled.div`
+    padding: 80px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 4rem 1rem;
+    min-height: calc(100vh - 160px);
 `;
 
-const Card = styled.div`
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(15px);
-    padding: 3rem 2rem;
-    border-radius: 20px;
-    max-width: 500px;
-    width: 100%;
+const CreationCard = styled.div`
+    background-color: #2a2a3a;
+    padding: 2rem 3rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
     text-align: center;
-    color: white;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 450px;
 
     h1 {
-        font-size: 2.5rem;
-        margin-bottom: 0.5rem;
+        color: #ff4040;
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+`;
+
+const Description = styled.p`
+    color: #ccc;
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+`;
+
+const GenreForm = styled.form`
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+`;
+
+const GenreInput = styled.input`
+    padding: 0.75rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    background-color: #3a3a4a;
+    color: #fff;
+    outline: none;
+
+    &:focus {
+        background-color: #44445a;
+    }
+`;
+
+const SubmitButton = styled.button`
+    background-color: #ff5555;
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: #e60000;
     }
 
-    p {
-        margin-bottom: 2rem;
-        font-size: 1.1rem;
-    }
-
-    form {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-    }
-
-    input {
-        padding: 1rem;
-        border-radius: 8px;
-        border: none;
-        font-size: 1rem;
-        outline: none;
-        transition: 0.3s ease;
-    }
-
-    input:focus {
-        box-shadow: 0 0 10px #4caf50;
-    }
-
-    button {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 0.5rem;
-        background-color: #4caf50;
-        padding: 1rem;
-        font-size: 1rem;
-        border: none;
-        border-radius: 8px;
-        color: white;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background 0.3s ease;
-    }
-
-    button:hover {
-        background-color: #45a049;
-    }
-
-    button:disabled {
-        background-color: #999;
+    &:disabled {
+        background-color: #8a8a8a;
         cursor: not-allowed;
     }
 `;

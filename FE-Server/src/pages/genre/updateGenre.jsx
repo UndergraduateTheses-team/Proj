@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import useUpdateGenre from '~/hooks/genre/useUpdateGenre';
 import { UserContext } from '~/context/authContext';
 import DenyAccess from '~/components/access/403';
-
 import Footer from '~/components/footer/Footer';
 import NavbarAdmin from '~/components/Navbar/NavbarAdmin';
 import styled from 'styled-components';
@@ -36,29 +35,28 @@ function UpdateGenre() {
         if (!genreInfo.name.trim()) return;
 
         await updateGenre(genreInfo, id);
-        // Optional: Add a toast or redirect
         window.location.href = '/genres';
     };
 
     return allowAccess ? (
         <>
             <NavbarAdmin />
-            <UpdateWrapper>
-                <FormCard>
+            <UpdateContainer>
+                <EditCard>
                     <h1><FaEdit /> Update Genre</h1>
-                    <p>Modify the name of the genre below and hit update.</p>
-                    <form onSubmit={handleSubmit}>
-                        <input
+                    <Instruction>Modify the genre name below and save changes.</Instruction>
+                    <EditForm onSubmit={handleSubmit}>
+                        <GenreInput
                             type="text"
                             value={genreInfo.name}
                             onChange={(e) => setGenreInfo({ ...genreInfo, name: e.target.value })}
                             placeholder="Enter new genre name"
                             required
                         />
-                        <button type="submit">Update</button>
-                    </form>
-                </FormCard>
-            </UpdateWrapper>
+                        <SaveButton type="submit">Save Changes</SaveButton>
+                    </EditForm>
+                </EditCard>
+            </UpdateContainer>
             <Footer />
         </>
     ) : (
@@ -68,78 +66,72 @@ function UpdateGenre() {
 
 export default UpdateGenre;
 
-// Styled Components
-const UpdateWrapper = styled.div`
-    min-height: 80vh;
+const UpdateContainer = styled.div`
+    background: linear-gradient(to bottom, #1a1a2e, #16213e);
+    min-height: calc(100vh - 160px);
+    padding: 80px 40px;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-    padding: 2rem;
 `;
 
-const FormCard = styled.div`
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(14px);
-    border-radius: 20px;
-    padding: 3rem 2rem;
-    color: #fff;
-    max-width: 500px;
-    width: 100%;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+const EditCard = styled.div`
+    background-color: #2a2a3a;
+    padding: 2rem 2.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
     text-align: center;
+    width: 100%;
+    max-width: 450px;
 
     h1 {
-        font-size: 2.2rem;
-        margin-bottom: 0.5rem;
+        color: #ff4040;
+        font-size: 2rem;
+        margin-bottom: 1rem;
         display: flex;
         justify-content: center;
         align-items: center;
         gap: 0.5rem;
     }
+`;
 
-    p {
-        font-size: 1rem;
-        margin-bottom: 2rem;
-        color: #ddd;
+const Instruction = styled.p`
+    color: #ccc;
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+`;
+
+const EditForm = styled.form`
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+`;
+
+const GenreInput = styled.input`
+    padding: 0.75rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    background-color: #3a3a4a;
+    color: #fff;
+    outline: none;
+
+    &:focus {
+        background-color: #44445a;
     }
+`;
 
-    form {
-        display: flex;
-        flex-direction: column;
-        gap: 1.2rem;
-    }
+const SaveButton = styled.button`
+    background-color: #ff5555;
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
 
-    input {
-        padding: 1rem;
-        font-size: 1rem;
-        border-radius: 8px;
-        border: none;
-        outline: none;
-        transition: box-shadow 0.3s ease;
-    }
-
-    input:focus {
-        box-shadow: 0 0 10px #4caf50;
-    }
-
-    button {
-        background-color: #4caf50;
-        color: white;
-        font-weight: bold;
-        border: none;
-        padding: 1rem;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-        background-color: #43a047;
-    }
-
-    button:disabled {
-        background-color: #888;
-        cursor: not-allowed;
+    &:hover {
+        background-color: #e60000;
     }
 `;

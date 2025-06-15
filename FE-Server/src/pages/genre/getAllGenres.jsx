@@ -6,160 +6,180 @@ import { UserContext } from '~/context/authContext';
 import DenyAccess from '~/components/access/403';
 import Footer from '~/components/footer/Footer';
 import NavbarAdmin from '~/components/Navbar/NavbarAdmin';
-import { FaEdit, FaTrashAlt, FaPlus } from 'react-icons/fa';
 
 function GenresPage() {
     const { genreList } = useGetGenres();
     const { allowAccess } = useContext(UserContext);
+    const [searchTerm, setSearchTerm] = React.useState('');
+
+    const filteredGenres = genreList.filter(genre =>
+        genre.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     return (
-        <StyledPage>
+        <CinematicContainer>
             <NavbarAdmin />
-            <StyledContainer>
+            <div className="content">
                 {allowAccess ? (
                     <>
-                        <HeaderBar>
-                            <h1>🎬 Genre Management</h1>
-                            <Link to="/createGenre" className="create-btn">
-                                <FaPlus /> Add Genre
+                        <h1 className="title">ANIME GENRE VAULT</h1>
+                        <div className="controls">
+                            <input
+                                type="text"
+                                placeholder="Search genres..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="searchBar"
+                            />
+                            <Link to="/createGenre">
+                                <button className="addButton">Add New Genre</button>
                             </Link>
-                        </HeaderBar>
-
-                        <CardGrid>
-                            {genreList.map((genre) => (
-                                <Card key={genre._id}>
-                                    <GenreName>{genre.name}</GenreName>
-                                    <Actions>
-                                        <Link to={`/updateGenre/${genre._id}`} className="edit">
-                                            <FaEdit /> Edit
-                                        </Link>
-                                        <Link to={`/deleteGenre/${genre._id}`} className="delete">
-                                            <FaTrashAlt /> Delete
-                                        </Link>
-                                    </Actions>
-                                </Card>
-                            ))}
-                        </CardGrid>
+                        </div>
+                        <GenreTable>
+                            <thead>
+                                <tr>
+                                    <th>GENRE TITLE</th>
+                                    <th>ACTIONS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredGenres.map((genre) => (
+                                    <tr key={genre._id}>
+                                        <td>{genre.name}</td>
+                                        <td>
+                                            <Link to={`/updateGenre/${genre._id}`}>
+                                                <button className="editButton">Edit</button>
+                                            </Link>
+                                            <button
+                                                className="deleteButton"
+                                                onClick={() => {/* Handle delete logic */}}
+                                            >
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </GenreTable>
                     </>
                 ) : (
                     <DenyAccess />
                 )}
-            </StyledContainer>
+            </div>
             <Footer />
-        </StyledPage>
+        </CinematicContainer>
     );
 }
 
 export default GenresPage;
 
-const StyledPage = styled.div`
-    display: flex;
-    flex-direction: column;
+const CinematicContainer = styled.div`
+    background: linear-gradient(to bottom, #1a1a2e, #16213e);
     min-height: 100vh;
-    background-color: #0b0c2a;
-    color: #f5f5f5;
-    font-family: 'Poppins', sans-serif;
-`;
-
-const StyledContainer = styled.div`
-    flex: 1;
-    padding: 4em 2em;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
 
     .content {
-        width: 100%;
+        padding: 80px 40px 40px;
         max-width: 1200px;
         margin: 0 auto;
     }
-`;
 
-const HeaderBar = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2em;
-
-    h1 {
+    .title {
+        text-align: center;
         font-size: 2rem;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 0.5em;
-        color: #ffffff;
+        color: #ff4040;
+        text-transform: uppercase;
+        margin-bottom: 20px;
     }
 
-    .addGenreBtn {
+    .controls {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .searchBar {
+        padding: 10px;
+        width: 300px;
+        border: none;
+        border-radius: 5px;
+        background-color: #2a2a3a;
+        color: #fff;
+        font-size: 1rem;
+    }
+
+    .addButton {
+        background-color: #ff5555;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background-color 0.3s;
+
+        &:hover {
+            background-color: #e60000;
+        }
+    }
+
+    a {
+        text-decoration: none;
+    }
+`;
+
+const GenreTable = styled.table`
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #1e1e2f;
+
+    th, td {
+        padding: 15px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #ff4040;
+        color: white;
+        text-transform: uppercase;
+    }
+
+    td {
+        background-color: #2a2a3a;
+        border-bottom: 1px solid #3a3a4a;
+    }
+
+    tr:hover td {
+        background-color: #3a3a4a;
+    }
+
+    .editButton {
         background-color: #4caf50;
         color: white;
-        padding: 0.8em 1.5em;
+        padding: 8px 15px;
         border: none;
-        border-radius: 10px;
-        font-weight: bold;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        gap: 0.5em;
-        transition: background-color 0.3s ease;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: 10px;
+        transition: background-color 0.3s;
 
         &:hover {
             background-color: #45a049;
         }
     }
-`;
 
-const CardGrid = styled.div`
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2em;
-`;
-
-const Card = styled.div`
-    background: rgba(255, 255, 255, 0.05);
-    padding: 1.5em;
-    border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    color: #f0f0f0;
-    text-align: center;
-    transition: transform 0.3s ease;
-
-    &:hover {
-        transform: translateY(-5px);
-        background: rgba(255, 255, 255, 0.08);
-    }
-`;
-
-const GenreName = styled.h3`
-    margin-bottom: 1em;
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: #ffffff;
-`;
-
-const Actions = styled.div`
-    display: flex;
-    justify-content: center;
-    gap: 1em;
-
-    a {
-        padding: 0.5em 1em;
-        border-radius: 8px;
-        font-weight: bold;
-        text-decoration: none;
+    .deleteButton {
+        background-color: #f44336;
         color: white;
-        display: flex;
-        align-items: center;
-        gap: 0.5em;
-        font-size: 0.9rem;
-
-        &.edit {
-            background-color: #00bcd4;
-        }
-
-        &.delete {
-            background-color: #f44336;
-        }
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
 
         &:hover {
-            opacity: 0.85;
+            background-color: #da190b;
         }
     }
 `;
