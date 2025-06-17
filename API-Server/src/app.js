@@ -20,28 +20,28 @@ process.on('unhandledRejection', (reason) => {
   process.exit(1)
 })
 
-const httpLogger = pinoHttp({
-    logger,
-    serializers: {
-      req: (req) => ({
-        method: req.method,
-        url: req.url,
-        headers: {
-            'OS platform': req.headers['sec-ch-ua-platform'],
-            'Browser':          req.headers['sec-ch-ua'],
-            'remoteAddress': req.remoteAddress,
-            'remotePort':    req.remotePort,
-          },
-    }),
+// const httpLogger = pinoHttp({
+//     logger,
+//     serializers: {
+//       req: (req) => ({
+//         method: req.method,
+//         url: req.url,
+//         headers: {
+//             'OS platform': req.headers['sec-ch-ua-platform'],
+//             'Browser':          req.headers['sec-ch-ua'],
+//             'remoteAddress': req.remoteAddress,
+//             'remotePort':    req.remotePort,
+//           },
+//     }),
 
-      res: (res) => ({
-        statusCode: res.statusCode,
-      }),
-    },
-})
+//       res: (res) => ({
+//         statusCode: res.statusCode,
+//       }),
+//     },
+// })
 const app = express();
 
-app.use(httpLogger);
+// app.use(httpLogger);
 app.use(express.json());
 
 app.use((req, res, next) => {

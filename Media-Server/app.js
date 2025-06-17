@@ -19,9 +19,9 @@ process.on('unhandledRejection', (reason) => {
   process.exit(1)
 })
 
-const httpLogger = pinoHttp({ logger })
+// const httpLogger = pinoHttp({ logger })
 const app = express();
-app.use(httpLogger);
+// app.use(httpLogger);
 app.use(cors({
   origin: [
     `http://${process.env.API_SERVER}:8089`,
