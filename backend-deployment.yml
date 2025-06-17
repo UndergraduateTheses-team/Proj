@@ -14,11 +14,13 @@ spec:
       labels:
         app: backend
     spec:
-      nodeSelector:
-        role: backend # Schedule pods only on nodes with this label
       containers:
-      - name: backend
-        image: be:latest
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 8089 # Change this to your backend port
+        - name: backend
+          image: asia-southeast1-docker.pkg.dev/lexical-aquifer-445708-u1/docker-registry/be:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8089
+          resources:            
+            requests:
+              cpu: "250m"
+              memory: "512Mi"

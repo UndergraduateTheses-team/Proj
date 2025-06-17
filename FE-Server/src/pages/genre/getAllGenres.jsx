@@ -4,178 +4,182 @@ import styled from 'styled-components';
 import useGetGenres from '~/hooks/genre/useGetGenres';
 import { UserContext } from '~/context/authContext';
 import DenyAccess from '~/components/access/403';
-
 import Footer from '~/components/footer/Footer';
 import NavbarAdmin from '~/components/Navbar/NavbarAdmin';
 
 function GenresPage() {
     const { genreList } = useGetGenres();
     const { allowAccess } = useContext(UserContext);
+    const [searchTerm, setSearchTerm] = React.useState('');
+
+    const filteredGenres = genreList.filter(genre =>
+        genre.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
-        <StyledPage>
+        <CinematicContainer>
             <NavbarAdmin />
-            <StyledContainer>
-                {allowAccess === true ? (
-                    <div className="content">
-                        <div className="buttonContainer">
+            <div className="content">
+                {allowAccess ? (
+                    <>
+                        <h1 className="title">ANIME GENRE VAULT</h1>
+                        <div className="controls">
+                            <input
+                                type="text"
+                                placeholder="Search genres..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="searchBar"
+                            />
                             <Link to="/createGenre">
-                                <button className="createButton">Create New</button>
+                                <button className="addButton">Add New Genre</button>
                             </Link>
                         </div>
-                        <table className="tableGenres">
+                        <GenreTable>
                             <thead>
                                 <tr>
-                                    <th>Genres Name</th>
-                                    <th>Actions</th>
+                                    <th>GENRE TITLE</th>
+                                    <th>ACTIONS</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {genreList.map((genre) => (
+                                {filteredGenres.map((genre) => (
                                     <tr key={genre._id}>
                                         <td>{genre.name}</td>
                                         <td>
-                                            <Link className="editGenres" to={`/updateGenre/${genre._id}`}>
-                                                Edit
+                                            <Link to={`/updateGenre/${genre._id}`}>
+                                                <button className="editButton">Edit</button>
                                             </Link>
-                                            <Link className="deleteGenres" to={`/deleteGenre/${genre._id}`}>
+                                            <button
+                                                className="deleteButton"
+                                                onClick={() => {/* Handle delete logic */}}
+                                            >
                                                 Delete
-                                            </Link>
+                                            </button>
                                         </td>
                                     </tr>
                                 ))}
                             </tbody>
-                        </table>
-                    </div>
+                        </GenreTable>
+                    </>
                 ) : (
                     <DenyAccess />
                 )}
-            </StyledContainer>
+            </div>
             <Footer />
-        </StyledPage>
+        </CinematicContainer>
     );
 }
 
 export default GenresPage;
 
-const StyledPage = styled.div`
-    display: flex;
-    flex-direction: column;
+const CinematicContainer = styled.div`
+    background: linear-gradient(to bottom, #1a1a2e, #16213e);
     min-height: 100vh;
-    background-color: #0b0c2a;
-`;
-
-const StyledContainer = styled.div`
-    flex: 1; /* Ensures this container takes up all available space */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin:6em;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
 
     .content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 80%;
-        max-width: 800px;
-        padding: 2em;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 80px 40px 40px;
+        max-width: 1200px;
+        margin: 0 auto;
     }
 
-    .buttonContainer {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        margin-bottom: 1em;
+    .title {
+        text-align: center;
+        font-size: 2rem;
+        color: #ff4040;
+        text-transform: uppercase;
+        margin-bottom: 20px;
     }
 
-    .createButton {
-        padding: 0.5em 1em;
+    .controls {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .searchBar {
+        padding: 10px;
+        width: 300px;
+        border: none;
+        border-radius: 5px;
+        background-color: #2a2a3a;
+        color: #fff;
+        font-size: 1rem;
+    }
+
+    .addButton {
+        background-color: #ff5555;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background-color 0.3s;
+
+        &:hover {
+            background-color: #e60000;
+        }
+    }
+
+    a {
+        text-decoration: none;
+    }
+`;
+
+const GenreTable = styled.table`
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #1e1e2f;
+
+    th, td {
+        padding: 15px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #ff4040;
+        color: white;
+        text-transform: uppercase;
+    }
+
+    td {
+        background-color: #2a2a3a;
+        border-bottom: 1px solid #3a3a4a;
+    }
+
+    tr:hover td {
+        background-color: #3a3a4a;
+    }
+
+    .editButton {
         background-color: #4caf50;
         color: white;
+        padding: 8px 15px;
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        text-decoration: none;
-        width: 100%;
+        margin-right: 10px;
+        transition: background-color 0.3s;
 
         &:hover {
             background-color: #45a049;
         }
     }
 
-    .tableGenres {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 1em 0;
-
-        th,
-        td {
-            padding: 1em;
-            border: 1px solid #ddd;
-            text-align: left;
-            background-color: white;
-            
-        }
-
-        th {
-            background-color: #4caf50;;
-            color:white;
-            
-        }
-
-        td {
-            color: black;
-            a {
-                margin-right: 1em;
-               
-                text-decoration: none;
-
-                &:hover {
-                    text-decoration: underline;
-                }
-            }
-        }
-    }
-        .editGenres{
-            background-color:#4caf50;
-            padding:10px;
-            border-radius: 10px;
-        }
-
-        .deleteGenres{
-        background-color:#ff2616;
-        
-        padding:10px;
-        border-radius: 10px;
-        }
-
-    .buttonContainer {
-        width: 100%;
-        display: flex;
-        justify-content: flex-end;
-        margin-bottom: 1em;
-
-        a {
-            width: 100%;
-        }
-    }
-
-    .createButton {
-        padding: 0.5em 1em;
-        background-color: #4caf50; /* Green */
+    .deleteButton {
+        background-color: #f44336;
         color: white;
+        padding: 8px 15px;
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        text-decoration: none;
-        width: calc(100% - 2px); /* Adjust width to match table */
-        padding: 20px;
-        padding-bottom: -20px
+        transition: background-color 0.3s;
+
         &:hover {
-            background-color: #45a049;
+            background-color: #da190b;
         }
     }
 `;

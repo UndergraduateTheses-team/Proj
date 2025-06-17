@@ -21,10 +21,9 @@ function CreateFilmPage() {
         totalChap: '',
         movieDuration: '',
     });
-    console.log(filmInfor);
-
     const [genresList, setGenresList] = useState([]);
     const [selectedGenres, setSelectedGenres] = useState([]);
+    const [posterPreview, setPosterPreview] = useState(null); // State for image preview
     const { createFilm } = useCreateFilm();
 
     useEffect(() => {
@@ -48,7 +47,19 @@ function CreateFilmPage() {
             setSelectedGenres([...selectedGenres, genreId]);
         }
     };
-    console.log(selectedGenres)
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setFilmInfor({ ...filmInfor, poster_img: file });
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPosterPreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         await createFilm({ ...filmInfor, genres: selectedGenres });
@@ -56,220 +67,275 @@ function CreateFilmPage() {
     };
 
     return (
-        <CreateFilm>
-            {allowAccess === true ? (
-                <>
-                    <NavbarAdmin />
-                    <div className="container">
-                        <div className="createFilmContairner">
-                            <form className="formCreateFilm" onSubmit={handleSubmit}>
-                                <label>Film name</label>
-                                <input
-                                    value={filmInfor.name}
-                                    type="text"
-                                    name="name"
-                                    onChange={(e) => {
-                                        setFilmInfor({ ...filmInfor, name: e.target.value });
-                                    }}
-                                />
-                                <label>Genres</label>
-                                <div className="genresContainer">
-                                    {genresList.map((genre) => {
-                                        return (
-                                            <div
-                                                key={genre._id}
-                                                style={{ display: 'flex', justifyContent: 'space-between' }}
-                                            >
-                                                <label>{genre.name}</label>
+        <CinematicContainer>
+            <NavbarAdmin />
+            <ContentArea>
+                {allowAccess ? (
+                    <>
+                        <FilmCreationCard>
+                            <h1>Create New Film</h1>
+                            <FilmForm onSubmit={handleSubmit}>
+                                <FormGroup>
+                                    <label>Film Name</label>
+                                    <InputField
+                                        type="text"
+                                        value={filmInfor.name}
+                                        onChange={(e) => setFilmInfor({ ...filmInfor, name: e.target.value })}
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <label>Genres</label>
+                                    <GenresContainer>
+                                        {genresList.map((genre) => (
+                                            <GenreCheckbox key={genre._id}>
                                                 <input
                                                     type="checkbox"
                                                     checked={selectedGenres.includes(genre._id)}
                                                     onChange={() => handleChange(genre._id)}
                                                 />
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                                <label>Film country</label>
-                                <input
-                                    value={filmInfor.country}
-                                    type="text"
-                                    name="country"
-                                    onChange={(e) => {
-                                        setFilmInfor({ ...filmInfor, country: e.target.value });
-                                    }}
-                                />
-                                <label>Film actor</label>
-                                <input
-                                    value={filmInfor.actors}
-                                    type="text"
-                                    name="actor"
-                                    onChange={(e) => {
-                                        setFilmInfor({ ...filmInfor, actors: [e.target.value] });
-                                    }}
-                                />
-                                <label>Film director</label>
-                                <input
-                                    value={filmInfor.director}
-                                    type="text"
-                                    name="director"
-                                    onChange={(e) => {
-                                        setFilmInfor({ ...filmInfor, director: e.target.value });
-                                    }}
-                                />
-
-                                <label>Film status</label>
-                                <select
-                                    onChange={(e) => {
-                                        setFilmInfor({ ...filmInfor, status: e.target.value });
-                                    }}
-                                >
-                                    <option value="dang cap nhat">Đang cập nhật</option>
-                                    <option value="hoan thanh">Đã hoàn thành</option>
-                                </select>
-
-                                <label>Film Poster</label>
-                                <input
-                                    type="file"
-                                    name="posterImg"
-                                    onChange={(e) => {
-                                        setFilmInfor({ ...filmInfor, poster_img: e.target.files[0] });
-                                    }}
-                                />
-                                <label>Film description</label>
-                                <input
-                                    value={filmInfor.description}
-                                    type="text"
-                                    name="description"
-                                    onChange={(e) => {
-                                        setFilmInfor({ ...filmInfor, description: e.target.value });
-                                    }}
-                                />
-                                <label>Film totalChap</label>
-                                <input
-                                    value={filmInfor.totalChap}
-                                    type="text"
-                                    name="totalChap"
-                                    onChange={(e) => {
-                                        setFilmInfor({ ...filmInfor, totalChap: e.target.value });
-                                    }}
-                                />
-                                <label>Film movieDuration</label>
-                                <input
-                                    value={filmInfor.movieDuration}
-                                    type="text"
-                                    name="movieDuration"
-                                    onChange={(e) => {
-                                        setFilmInfor({ ...filmInfor, movieDuration: e.target.value });
-                                    }}
-                                />
-
-                                <button type="submit">Create</button>
-                                <button>
-                                    {' '}
-                                    <a href="/filmsInfor">Back</a>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                    <Footer />
-                </>
-            ) : (
-                <DenyAccess />
-            )}
-        </CreateFilm>
+                                                <span>{genre.name}</span>
+                                            </GenreCheckbox>
+                                        ))}
+                                    </GenresContainer>
+                                </FormGroup>
+                                <FormGroup>
+                                    <label>Film Country</label>
+                                    <InputField
+                                        type="text"
+                                        value={filmInfor.country}
+                                        onChange={(e) => setFilmInfor({ ...filmInfor, country: e.target.value })}
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <label>Film Actor</label>
+                                    <InputField
+                                        type="text"
+                                        value={filmInfor.actors}
+                                        onChange={(e) => setFilmInfor({ ...filmInfor, actors: [e.target.value] })}
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <label>Film Director</label>
+                                    <InputField
+                                        type="text"
+                                        value={filmInfor.director}
+                                        onChange={(e) => setFilmInfor({ ...filmInfor, director: e.target.value })}
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <label>Film Status</label>
+                                    <SelectField
+                                        value={filmInfor.status}
+                                        onChange={(e) => setFilmInfor({ ...filmInfor, status: e.target.value })}
+                                    >
+                                        <option value="dang cap nhat">Đang cập nhật</option>
+                                        <option value="hoan thanh">Đã hoàn thành</option>
+                                    </SelectField>
+                                </FormGroup>
+                                <FormGroup>
+                                    <label>Film Poster</label>
+                                    <FileInput
+                                        type="file"
+                                        onChange={handleFileChange}
+                                    />
+                                    {posterPreview && (
+                                        <PosterPreview src={posterPreview} alt="Poster Preview" />
+                                    )}
+                                </FormGroup>
+                                <FormGroup>
+                                    <label>Film Description</label>
+                                    <InputField
+                                        type="text"
+                                        value={filmInfor.description}
+                                        onChange={(e) => setFilmInfor({ ...filmInfor, description: e.target.value })}
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <label>Total Chapters</label>
+                                    <InputField
+                                        type="text"
+                                        value={filmInfor.totalChap}
+                                        onChange={(e) => setFilmInfor({ ...filmInfor, totalChap: e.target.value })}
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <label>Movie Duration</label>
+                                    <InputField
+                                        type="text"
+                                        value={filmInfor.movieDuration}
+                                        onChange={(e) => setFilmInfor({ ...filmInfor, movieDuration: e.target.value })}
+                                    />
+                                </FormGroup>
+                                <ButtonGroup>
+                                    <SubmitButton type="submit">Create</SubmitButton>
+                                    <BackButton>
+                                        <a href="/filmsInfor">Back</a>
+                                    </BackButton>
+                                </ButtonGroup>
+                            </FilmForm>
+                        </FilmCreationCard>
+                    </>
+                ) : (
+                    <DenyAccess />
+                )}
+            </ContentArea>
+            <Footer />
+        </CinematicContainer>
     );
 }
 
 export default CreateFilmPage;
 
-const CreateFilm = styled.div`
-    .container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-left: 400px;
-        padding-top: 100px;
-        padding-bottom: 100px;
-    }
-    .createFilmContainer {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh; /* Center vertically */
-        background-color: #f9f9f9; /* Optional: Add a background color */
-    }
-    .create {
-        padding: 0.5rem 10rem;
-    }
+const CinematicContainer = styled.div`
+    background: linear-gradient(to bottom, #1a1a2e, #16213e);
+    min-height: 100vh;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+`;
 
-    .formCreateFilm {
-        display: flex;
-        flex-direction: column;
-        gap: 1em; /* Add space between elements */
-        padding: 2em;
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        background-color: #fff;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Optional: Add some shadow for better visibility */
-        width: 40vw; /* Optional: Set a width for the form */
-    }
+const ContentArea = styled.div`
+    padding: 80px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+`;
 
-    .formCreateFilm label {
-        display: flex;
-        justify-content: center;
+const FilmCreationCard = styled.div`
+    background-color: #2a2a3a;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    text-align: center;
+
+    h1 {
+        color: #ff4040;
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+    }
+`;
+
+const FilmForm = styled.form`
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+`;
+
+const FormGroup = styled.div`
+    text-align: left;
+
+    label {
+        display: block;
         font-weight: bold;
-        margin-bottom: 0.5em; /* Space between label and input */
+        margin-bottom: 0.5rem;
+        color: #ccc;
+    }
+`;
+
+const InputField = styled.input`
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #3a3a4a;
+    color: #fff;
+    font-size: 1rem;
+    outline: none;
+
+    &:focus {
+        background-color: #44445a;
+    }
+`;
+
+const GenresContainer = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+`;
+
+const GenreCheckbox = styled.label`
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #fff;
+
+    input {
+        margin: 0;
+    }
+`;
+
+const SelectField = styled.select`
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #3a3a4a;
+    color: #fff;
+    font-size: 1rem;
+    outline: none;
+
+    &:focus {
+        background-color: #44445a;
+    }
+`;
+
+const FileInput = styled.input`
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #3a3a4a;
+    color: #fff;
+    font-size: 1rem;
+    outline: none;
+
+    &:focus {
+        background-color: #44445a;
+    }
+`;
+
+const PosterPreview = styled.img`
+    max-width: 100%;
+    height: auto;
+    margin-top: 1rem;
+    border-radius: 5px;
+`;
+
+const ButtonGroup = styled.div`
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+`;
+
+const SubmitButton = styled.button`
+    background-color: #ff5555;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: #e60000;
+    }
+`;
+
+const BackButton = styled.button`
+    background-color: #4caf50;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: #45a049;
     }
 
-    .formCreateFilm input[type='text'],
-    .formCreateFilm input[type='file'],
-    .formCreateFilm select {
-        width: 100%;
-        padding: 0.5em;
-        margin-bottom: 1em; /* Space below inputs */
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-
-    .genresContainer {
-        display: flex;
-        justify-content: center;
-        gap: 0.5em;
-        margin-bottom: 1em; /* Space below genres */
-    }
-
-    .genresContainer label {
-        display: flex;
-        align-items: center;
-    }
-
-    .genresContainer input[type='checkbox'] {
-        margin-right: 0.5em;
-        margin-bottom: 0.4em;
-    }
-
-    .formCreateFilm button {
-        padding: 0.5em 1em;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    .formCreateFilm button[type='submit'] {
-        background-color: #4caf50; /* Green */
+    a {
         color: white;
-    }
-
-    .formCreateFilm button:nth-of-type(2) {
-        background-color: #f44336; /* Red */
-        color: white;
-        margin-left: 0.5em; /* Space between buttons */
-    }
-
-    .buttonContainer {
-        display: flex;
-        justify-content: space-between;
-        width: 100%;
+        text-decoration: none;
     }
 `;

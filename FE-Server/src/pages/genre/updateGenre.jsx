@@ -3,16 +3,14 @@ import { useParams } from 'react-router-dom';
 import useUpdateGenre from '~/hooks/genre/useUpdateGenre';
 import { UserContext } from '~/context/authContext';
 import DenyAccess from '~/components/access/403';
-import styled from 'styled-components';
-
 import Footer from '~/components/footer/Footer';
 import NavbarAdmin from '~/components/Navbar/NavbarAdmin';
+import styled from 'styled-components';
+import { FaEdit } from 'react-icons/fa';
 
 function UpdateGenre() {
     const { allowAccess } = useContext(UserContext);
-    const [genreInfo, setGenreInfo] = useState({
-        name: '',
-    });
+    const [genreInfo, setGenreInfo] = useState({ name: '' });
     const { id } = useParams();
     const { updateGenre } = useUpdateGenre();
 
@@ -26,7 +24,7 @@ function UpdateGenre() {
                 }
                 console.log(data?.message);
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         };
         getGenre();
@@ -34,23 +32,31 @@ function UpdateGenre() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        if (!genreInfo.name.trim()) return;
+
         await updateGenre(genreInfo, id);
+        window.location.href = '/genres';
     };
 
     return allowAccess ? (
         <>
             <NavbarAdmin />
-            <StyledContainer>
-                <StyledForm onSubmit={handleSubmit}>
-                    <StyledInput
-                        type="text"
-                        onChange={(event) => setGenreInfo({ ...genreInfo, name: event.target.value })}
-                        value={genreInfo.name}
-                        placeholder="Enter genre name"
-                    />
-                    <StyledButton type="submit">Update</StyledButton>
-                </StyledForm>
-            </StyledContainer>
+            <UpdateContainer>
+                <EditCard>
+                    <h1><FaEdit /> Update Genre</h1>
+                    <Instruction>Modify the genre name below and save changes.</Instruction>
+                    <EditForm onSubmit={handleSubmit}>
+                        <GenreInput
+                            type="text"
+                            value={genreInfo.name}
+                            onChange={(e) => setGenreInfo({ ...genreInfo, name: e.target.value })}
+                            placeholder="Enter new genre name"
+                            required
+                        />
+                        <SaveButton type="submit">Save Changes</SaveButton>
+                    </EditForm>
+                </EditCard>
+            </UpdateContainer>
             <Footer />
         </>
     ) : (
@@ -60,48 +66,72 @@ function UpdateGenre() {
 
 export default UpdateGenre;
 
-const StyledContainer = styled.div`
+const UpdateContainer = styled.div`
+    background: linear-gradient(to bottom, #1a1a2e, #16213e);
+    min-height: calc(100vh - 160px);
+    padding: 80px 40px;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 81vh;
 `;
 
-const StyledForm = styled.form`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    background-color: #ffffff;
-    border: 1px solid #ccc;
+const EditCard = styled.div`
+    background-color: #2a2a3a;
+    padding: 2rem 2.5rem;
     border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    width: 40%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    width: 100%;
+    max-width: 450px;
 
-    @media (max-width: 768px) {
-        width: 80%;
+    h1 {
+        color: #ff4040;
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
     }
 `;
 
-const StyledInput = styled.input`
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
+const Instruction = styled.p`
+    color: #ccc;
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
 `;
 
-const StyledButton = styled.button`
-    padding: 10px 20px;
+const EditForm = styled.form`
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+`;
+
+const GenreInput = styled.input`
+    padding: 0.75rem;
     border: none;
     border-radius: 5px;
-    background-color: #4caf50;
+    font-size: 1rem;
+    background-color: #3a3a4a;
+    color: #fff;
+    outline: none;
+
+    &:focus {
+        background-color: #44445a;
+    }
+`;
+
+const SaveButton = styled.button`
+    background-color: #ff5555;
     color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s;
 
     &:hover {
-        background-color: #45a049;
+        background-color: #e60000;
     }
 `;

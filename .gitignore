@@ -7,11 +7,14 @@ node_modules/
 *.tfvars
 *tfstate*
 package-lock.json
+
 # testing
 /coverage
 *.mp4
+
 # production
 # /build
+
 # Exclude Terraform state files
 terraform.tfstate
 key.json
@@ -23,9 +26,18 @@ terraform.tfstate.backup
 
 # Exclude Terraform working directory
 .terraform/
-# misc
 
+# misc
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .DS_Store
+
+# Ignore Windows log JSON files
+**/log/*.json
+../API-Server/D:/Users/ASUS/Documents/log/*.json
+../Media-Server/D:/Users/ASUS/Documents/log/*.json
+../API-Server/D:\\Users\\ASUS\\Documents\\log\\pinoOutput-app-api.json
+../Media-Server/D:\\Users\\ASUS\\Documents\\log\\pinoOutput-app-media-server.json
+# Ignore uploads folder
+Media-Server/static/uploads/
