@@ -6,6 +6,10 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
+  - job_name: 'movies-app'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['localhost:3000']
 
 
 
