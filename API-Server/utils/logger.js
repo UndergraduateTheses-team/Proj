@@ -1,7 +1,7 @@
 import pino from 'pino'
 import ecsFormat from '@elastic/ecs-pino-format'
-// import pinoHttp from 'pino-http'
-// import pretty from 'pino-pretty'
+import pinoHttp from 'pino-http'
+import pretty from 'pino-pretty'
 import dotenv from 'dotenv';
 dotenv.config();
 export const transport = pino.transport({
@@ -21,6 +21,7 @@ export const transport = pino.transport({
         target: 'pino-pretty',
         options: { 
           colorize: true,
+          translateTime: "SYS:standard",
           destination: 1 
         },
         level: 'info'
@@ -39,5 +40,5 @@ export const logger = pino({
         }
     },
 
-    timestamp: () => `,"time":"${new Date().toLocaleTimeString()}"` 
+    timestamp: () => `,"time":"${new Date().toLocaleString()}"` 
 }, transport, ecsFormat());

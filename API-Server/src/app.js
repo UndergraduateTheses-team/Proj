@@ -10,6 +10,9 @@ dotenv.config();
 import pinoHttp from 'pino-http'
 import { logger } from "../utils/logger.js"
 import { startDiskMonitor } from "../utils/checkdisk.js";
+import client from "prom-client";
+
+
 process.on('uncaughtException', (err) => {
   logger.fatal({ err }, 'Uncaught exception, shutting down API-Server')
   process.exit(1)
@@ -20,28 +23,17 @@ process.on('unhandledRejection', (reason) => {
   process.exit(1)
 })
 
-const httpLogger = pinoHttp({
-    logger,
-    serializers: {
-      req: (req) => ({
-        method: req.method,
-        url: req.url,
-        headers: {
-            'OS platform': req.headers['sec-ch-ua-platform'],
-            'Browser':          req.headers['sec-ch-ua'],
-            'remoteAddress': req.remoteAddress,
-            'remotePort':    req.remotePort,
-          },
-    }),
+const register = new client.Registry();
+const collectDefaultMetrics = client.collectDefaultMetrics;
 
-      res: (res) => ({
-        statusCode: res.statusCode,
-      }),
-    },
-})
+collectDefaultMetrics({
+    register
+});
+
+
 const app = express();
 
-app.use(httpLogger);
+// app.use(httpLogger);
 app.use(express.json());
 
 app.use((req, res, next) => {
@@ -81,7 +73,31 @@ app.use(express.static(path.resolve(__dirname, "../static")));
 
 console.log("thu muc hien tai: ", __dirname);
 logger.info(`thu muc hien tai: ${__dirname}`);
+app.get("/metrics", async (req, res) => {
+    res.setHeader("Content-Type", client.register.contentType);
+    let metrics = await register.metrics();
+    res.send(metrics);
+});
+const http_request_counter = new client.Counter({
+    name: 'myapp_http_request_count',
+    help: 'Count of HTTP requests',
+    labelNames: ['method', 'route', 'statusCode']
+});
+
+register.registerMetric(http_request_counter);
+
+app.use("/*", function(req, res, next) {
+    http_request_counter.labels({
+        method: req.method,
+        route: req.originalUrl,
+        statusCode: res.statusCode
+    }).inc();
+    console.log(register.metrics());
+    next();
+});
+
 app.use("/api", router);
+
 
 mongoose.connect(`${process.env.MONGODB_URI}`)
         .then(() => {
@@ -129,3 +145,93 @@ app.get('/crash', (req, res) => {
 //   res.send(req.params);
 // });
 // throw new Error()
+
+
+
+
+
+
+// const client = require("prom-client");
+// const bodyParser = require("body-parser");
+
+// const register = new client.Registry();
+
+// // Configure default Prometheus labels
+// register.setDefaultLabels({
+//     app: "blue",
+// });
+
+// // Define Prometheus metrics
+// const http_request_counter = new client.Counter({
+//     name: 'myapp_http_request_count',
+//     help: 'Count of HTTP requests',
+//     labelNames: ['method', 'route', 'statusCode']
+// });
+// const userCounter = new client.Counter({
+//     name: "user_counter",
+//     help: "User counter for my application"
+// });
+
+// // Register Prometheus metrics with the registry
+// register.registerMetric(http_request_counter);
+// register.registerMetric(userCounter);
+
+// app.get("/metrics", async (req, res) => {
+//     res.setHeader("Content-Type", client.register.contentType);
+//     let metrics = await register.metrics();
+//     res.send(metrics);
+// });
+
+
+
+// // Collect default Prometheus metrics (e.g., CPU, memory)
+// client.collectDefaultMetrics({
+//     register
+// });
+
+// // Define a Prometheus histogram for response time
+// const restResponseTimeHistogram = new client.Histogram({
+//     name: 'rest_response_time_duration_seconds',
+//     help: 'REST API response time in seconds',
+//     labelNames: ['method', 'route', 'status_code']
+// });
+
+
+// ________________
+
+// app.get("/*", (req, res) => {
+//     userCounter.inc();
+//     console.log(register.metrics());
+//     res.send("test");
+// });
+
+// // Middleware to count HTTP requests and log metrics
+// app.use("/*", function(req, res, next) {
+//     http_request_counter.labels({
+//         method: req.method,
+//         route: req.originalUrl,
+//         statusCode: res.statusCode
+//     }).inc();
+//     console.log(register.metrics());
+//     next();
+// });
+//-------------------------------------------
+// const httpLogger = pinoHttp({
+//     logger,
+//     serializers: {
+//       req: (req) => ({
+//         method: req.method,
+//         url: req.url,
+//         headers: {
+//             'OS platform': req.headers['sec-ch-ua-platform'],
+//             'Browser':          req.headers['sec-ch-ua'],
+//             'remoteAddress': req.remoteAddress,
+//             'remotePort':    req.remotePort,
+//           },
+//     }),
+
+//       res: (res) => ({
+//         statusCode: res.statusCode,
+//       }),
+//     },
+// })

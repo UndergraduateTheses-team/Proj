@@ -8,7 +8,7 @@ import dotenv from 'dotenv';
 import pinoHttp from 'pino-http'
 dotenv.config();
 import { logger } from "./utils/logger.js";
-
+import client from "prom-client";
 process.on('uncaughtException', (err) => {
   logger.fatal({ err }, 'Uncaught exception, shutting down API-Server')
   process.exit(1)
@@ -18,10 +18,17 @@ process.on('unhandledRejection', (reason) => {
   logger.fatal({ reason }, 'Unhandled promise rejection, shutting down API-Server')
   process.exit(1)
 })
+const register = new client.Registry();
+const collectDefaultMetrics = client.collectDefaultMetrics;
 
-const httpLogger = pinoHttp({ logger })
+collectDefaultMetrics({
+    register
+});
+
+
+// const httpLogger = pinoHttp({ logger })
 const app = express();
-app.use(httpLogger);
+// app.use(httpLogger);
 app.use(cors({
   origin: [
     `http://${process.env.API_SERVER}:8089`,
@@ -52,6 +59,29 @@ app.use((req, res, next) => {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 app.use(express.static(path.join(__dirname, "static")));
 app.post("/uploads", upload.single("file"), uploadController);
+
+app.get("/metrics", async (req, res) => {
+    res.setHeader("Content-Type", client.register.contentType);
+    let metrics = await register.metrics();
+    res.send(metrics);
+});
+const http_request_counter = new client.Counter({
+    name: 'myapp_http_request_count',
+    help: 'Count of HTTP requests',
+    labelNames: ['method', 'route', 'statusCode']
+});
+
+register.registerMetric(http_request_counter);
+
+app.use("/*", function(req, res, next) {
+    http_request_counter.labels({
+        method: req.method,
+        route: req.originalUrl,
+        statusCode: res.statusCode
+    }).inc();
+    console.log(register.metrics());
+    next();
+});
 
 app.listen(process.env.PORT, () => {
   console.log("Server is running on port 8090");
