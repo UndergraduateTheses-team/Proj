@@ -3,6 +3,7 @@ import Comment from "../models/comment.js";
 import bcrypt from "bcryptjs";
 import fs from "fs";
 import dotenv from 'dotenv';
+import { logger } from "../../utils/logger.js"
 dotenv.config();
 
 export const getAllUsers = async (req, res) => {
