@@ -4,6 +4,7 @@ import pinoHttp from 'pino-http'
 import pretty from 'pino-pretty'
 import dotenv from 'dotenv';
 dotenv.config();
+
 export const transport = pino.transport({
     targets: [
 
@@ -40,5 +41,6 @@ export const logger = pino({
         }
     },
 
-    timestamp: () => `,"time":"${new Date().toLocaleString()}"` 
+    // timestamp: () => `,"time":"${new Date().toLocaleString()}"` 
 }, transport, ecsFormat());
+
