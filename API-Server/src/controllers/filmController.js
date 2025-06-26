@@ -193,7 +193,11 @@ export const update = async (req, res) => {
       }
 
 
-      fs.unlinkSync(req.file.path);
+      await fs.promises.unlink(req.file.path)
+      .catch(err => {
+        console.warn("Could not remove temp upload:", err);
+        logger.warn({userid:req.user.userId, username:req.user.name},"Could not remove temp upload:");
+      });
     }
 
 
@@ -210,7 +214,7 @@ export const update = async (req, res) => {
         message: "Cập nhật không thành công!",
       });
     }
-    logger.info({filmdata,userid:req.user.userId, username:req.user.name }, "Updated film successfully.")
+    logger.info({filmData,userid:req.user.userId, username:req.user.name }, "Updated film successfully.")
     return res.status(200).json({
       message: "Cập nhật thành công bộ phim",
       datas: updatedFilm,
