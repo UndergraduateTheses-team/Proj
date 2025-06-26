@@ -30,3 +30,8 @@ prometheusSpec:
     - job_name: 'kubernetes-nodes'
       static_configs:
         - targets: ['[::1]:9100']
+
+kubelet:
+  enabled: true
+  serviceMonitor:
+    enabled: true
