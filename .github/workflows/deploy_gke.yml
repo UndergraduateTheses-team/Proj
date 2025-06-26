@@ -19,7 +19,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Push metric: CI/CD started
+      - name: CI/CD started
         run: |
           echo "cicd_pipeline_status{stage=\"start\"} 1" | \
           curl --data-binary @- ${{ env.PUSHGATEWAY_URL }}/metrics/job/deploy_local
