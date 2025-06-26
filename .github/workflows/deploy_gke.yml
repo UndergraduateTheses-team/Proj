@@ -78,20 +78,3 @@ jobs:
           docker push "${{ env.GAR_ZONE }}-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/${{ env.GAR_REPO }}/${{ env.IMAGE_FE }}:${{ env.IMAGE_TAG }}"
           docker push "${{ env.GAR_ZONE }}-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/${{ env.GAR_REPO }}/${{ env.IMAGE_BE }}:${{ env.IMAGE_TAG }}"
 
-      - name: Deploy Frontend to Cloud Run
-        run: |
-          gcloud run deploy fe-service \
-            --image=${{ env.GAR_ZONE }}-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/${{ env.GAR_REPO }}/${{ env.IMAGE_FE }}:${{ env.IMAGE_TAG }} \
-            --region=${{ env.REGION }} \
-            --platform=managed \
-            --allow-unauthenticated \
-            --project=${{ secrets.GKE_PROJECT }}
-
-      - name: Deploy Backend to Cloud Run
-        run: |
-          gcloud run deploy be-service \
-            --image=${{ env.GAR_ZONE }}-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/${{ env.GAR_REPO }}/${{ env.IMAGE_BE }}:${{ env.IMAGE_TAG }} \
-            --region=${{ env.REGION }} \
-            --platform=managed \
-            --allow-unauthenticated \
-            --project=${{ secrets.GKE_PROJECT }}
