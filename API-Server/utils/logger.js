@@ -42,5 +42,10 @@ export const logger = pino({
     },
 
     // timestamp: () => `,"time":"${new Date().toLocaleString()}"` 
+    timestamp: () => {
+    const now = new Date();
+    const timeWithMs = now.toISOString(); // Converts to ISO 8601 format with milliseconds
+    return `,"time":"${timeWithMs}"`; // Adds the time field with milliseconds to your object
+}
 }, transport, ecsFormat());
 

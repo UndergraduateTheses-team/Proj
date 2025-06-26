@@ -5,7 +5,7 @@ import fs from "fs";
 import dotenv from 'dotenv';
 import { logger } from "../../utils/logger.js"
 dotenv.config();
-
+//marked line
 export const getAllUsers = async (req, res) => {
   let users
   try {
