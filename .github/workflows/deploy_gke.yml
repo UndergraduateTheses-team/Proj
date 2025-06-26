@@ -2,9 +2,6 @@ name: Build and Deploy to GKE
 
 on:
   workflow_dispatch:
-  # push:
-  #   branches:
-  #     - main
 
 jobs:
   setup-build-publish-deploy:
@@ -22,13 +19,13 @@ jobs:
       GAR_REPO: docker-registry
       PROMETHEUS_NAMESPACE: monitoring
       GRAFANA_NAMESPACE: monitoring
+      PUSHGATEWAY_URL: http://<YOUR_PUSHGATEWAY_IP_OR_DNS>:9091
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Authenticate with Google Cloud
-        id: auth
         uses: google-github-actions/auth@v2.1.7
         with:
           credentials_json: '${{ secrets.GKE_SA_KEY }}'
@@ -43,6 +40,11 @@ jobs:
           cluster_name: ${{ env.GKE_CLUSTER }}
           location: ${{ env.GKE_REGION }}
           project_id: ${{ secrets.GKE_PROJECT }}
+
+      - name: Push metric: CI/CD started
+        run: |
+          echo "cicd_pipeline_status{stage=\"start\"} 1" | \
+          curl --data-binary @- ${{ env.PUSHGATEWAY_URL }}/metrics/job/deploy_gke
 
       - name: Build Frontend Docker image
         run: |
@@ -71,31 +73,31 @@ jobs:
           ./bin/trivy image --severity CRITICAL,HIGH --format json --output trivy-report-be.json \
             "${{ env.GAR_ZONE }}-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/${{ env.GAR_REPO }}/${{ env.IMAGE_BE }}:${{ env.IMAGE_TAG }}"
 
-      - name: Upload Frontend Trivy Report
+      - name: Upload Trivy Reports
         uses: actions/upload-artifact@v4
         with:
-          name: trivy-scan-report-frontend
-          path: trivy-report-fe.json
+          name: trivy-scan-reports
+          path: |
+            trivy-report-fe.json
+            trivy-report-be.json
 
-      - name: Upload Backend Trivy Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-scan-report-backend
-          path: trivy-report-be.json
+      - name: Push Trivy Metrics to Prometheus
+        run: |
+          sudo apt-get update && sudo apt-get install -y jq
+          FE_HIGH=$(jq '[.Results[].Vulnerabilities[] | select(.Severity == "HIGH")] | length' trivy-report-fe.json)
+          FE_CRITICAL=$(jq '[.Results[].Vulnerabilities[] | select(.Severity == "CRITICAL")] | length' trivy-report-fe.json)
+          BE_HIGH=$(jq '[.Results[].Vulnerabilities[] | select(.Severity == "HIGH")] | length' trivy-report-be.json)
+          BE_CRITICAL=$(jq '[.Results[].Vulnerabilities[] | select(.Severity == "CRITICAL")] | length' trivy-report-be.json)
+
+          echo "trivy_vulnerabilities{component=\"frontend\",severity=\"HIGH\"} $FE_HIGH" | curl --data-binary @- ${{ env.PUSHGATEWAY_URL }}/metrics/job/trivy_fe
+          echo "trivy_vulnerabilities{component=\"frontend\",severity=\"CRITICAL\"} $FE_CRITICAL" | curl --data-binary @- ${{ env.PUSHGATEWAY_URL }}/metrics/job/trivy_fe
+          echo "trivy_vulnerabilities{component=\"backend\",severity=\"HIGH\"} $BE_HIGH" | curl --data-binary @- ${{ env.PUSHGATEWAY_URL }}/metrics/job/trivy_be
+          echo "trivy_vulnerabilities{component=\"backend\",severity=\"CRITICAL\"} $BE_CRITICAL" | curl --data-binary @- ${{ env.PUSHGATEWAY_URL }}/metrics/job/trivy_be
 
       - name: Push Docker images to Artifact Registry
         run: |
           docker push "${{ env.GAR_ZONE }}-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/${{ env.GAR_REPO }}/${{ env.IMAGE_FE }}:${{ env.IMAGE_TAG }}"
           docker push "${{ env.GAR_ZONE }}-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/${{ env.GAR_REPO }}/${{ env.IMAGE_BE }}:${{ env.IMAGE_TAG }}"
-
-      - name: Show deployment files (debug)
-        run: |
-          echo "--- Frontend Deployment ---"
-          cat frontend-deployment.yml || echo "frontend-deployment.yml not found"
-          echo "--- Backend Deployment ---"
-          cat backend-deployment.yml || echo "backend-deployment.yml not found"
-          echo "--- Service ---"
-          cat service.yaml || echo "service.yaml not found"
 
       - name: Deploy to GKE
         run: |
@@ -103,3 +105,14 @@ jobs:
           kubectl rollout status deployment/frontend-deployment -n default
           kubectl rollout status deployment/backend-deployment -n default
 
+      - name: Push metric: CI/CD success
+        if: success()
+        run: |
+          echo "cicd_pipeline_status{stage=\"success\"} 1" | \
+          curl --data-binary @- ${{ env.PUSHGATEWAY_URL }}/metrics/job/deploy_gke
+
+      - name: Push metric: CI/CD failed
+        if: failure()
+        run: |
+          echo "cicd_pipeline_status{stage=\"fail\"} 1" | \
+          curl --data-binary @- ${{ env.PUSHGATEWAY_URL }}/metrics/job/deploy_gke

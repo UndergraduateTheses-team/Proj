@@ -1,8 +1,8 @@
 alertmanager:
-  enabled: false
+  enabled: true
 
 nodeExporter:
-  enabled: false
+  enabled: true
   tolerations: []
 
 kubeStateMetrics:
