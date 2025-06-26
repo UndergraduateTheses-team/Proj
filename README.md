@@ -23,3 +23,9 @@ Trong mô hình phát triển và vận hành phần mềm hiện đại, DevOps
 6. DNS Server: Bind9
 7. Monitoring: Grafana Prometheus
 8. Centralized Logging: ELK Stack
+
+
+## Website</br>
+https://huahogiahuy-nguyenvandat.id.vn
+## Link Demo</br>
+https://drive.google.com/drive/folders/11D2ED5AD-uxxXz-tIzShZdOikUV_yihF?usp=sharing
