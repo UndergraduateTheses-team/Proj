@@ -7,7 +7,6 @@ dotenv.config();
 
 export const transport = pino.transport({
     targets: [
-
       {
         target: 'pino/file',
         options: {
