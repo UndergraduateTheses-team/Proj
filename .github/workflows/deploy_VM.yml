@@ -57,7 +57,11 @@ jobs:
       - name: Build Project
         working-directory: FE-Server
         run: CI=false npm run build
-
+      - name: Update permission
+        run: |
+             chmod -R 777 FE-Server/build/*
+             chmod -R 777 Meida-Server/
+             chmod -R 777 API-Server/
       - name: Deploy to fe (Copy Build Files)
         run: |
              gcloud compute scp --recurse FE-Server/build/* huahogiahuy_21042003@fe:/var/www/html/ --project=$PROJECT_ID --zone=us-central1-c
