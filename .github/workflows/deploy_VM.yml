@@ -64,9 +64,8 @@ jobs:
       
       - name: Deploy to database
         run: |
-             gcloud compute scp --recurse Media-Server/* huahogiahuy_21042003@database:/home/huahogiahuy_21042003/Proj/Media-Server --project=$PROJECT_ID --zone=us-central1-c --tunnel-through-iap
+             gcloud compute scp --recurse Media-Server/* huahogiahuy_21042003@database:/home/huahogiahuy_21042003/Proj/Media-Server --project=$PROJECT_ID --zone=us-central1-f --tunnel-through-iap
       
       - name:  Deploy to be
         run: |
              gcloud compute scp --recurse API-Server/* huahogiahuy_21042003@be:/home/huahogiahuy_21042003/Proj/API-Server/ --project=$PROJECT_ID --zone=us-central1-c --tunnel-through-iap
-              
