@@ -23,7 +23,7 @@ function CreateFilmPage() {
     });
     const [genresList, setGenresList] = useState([]);
     const [selectedGenres, setSelectedGenres] = useState([]);
-    const [posterPreview, setPosterPreview] = useState(null); // State for image preview
+    const [posterPreview, setPosterPreview] = useState(null);
     const { createFilm } = useCreateFilm();
 
     useEffect(() => {
@@ -41,11 +41,9 @@ function CreateFilmPage() {
 
     const handleChange = (genreId) => {
         const isChecked = selectedGenres.includes(genreId);
-        if (isChecked) {
-            setSelectedGenres(selectedGenres.filter((id) => id !== genreId));
-        } else {
-            setSelectedGenres([...selectedGenres, genreId]);
-        }
+        setSelectedGenres(
+            isChecked ? selectedGenres.filter((id) => id !== genreId) : [...selectedGenres, genreId]
+        );
     };
 
     const handleFileChange = (e) => {
@@ -53,9 +51,7 @@ function CreateFilmPage() {
         if (file) {
             setFilmInfor({ ...filmInfor, poster_img: file });
             const reader = new FileReader();
-            reader.onloadend = () => {
-                setPosterPreview(reader.result);
-            };
+            reader.onloadend = () => setPosterPreview(reader.result);
             reader.readAsDataURL(file);
         }
     };
@@ -71,110 +67,128 @@ function CreateFilmPage() {
             <NavbarAdmin />
             <ContentArea>
                 {allowAccess ? (
-                    <>
-                        <FilmCreationCard>
-                            <h1>Create New Film</h1>
-                            <FilmForm onSubmit={handleSubmit}>
-                                <FormGroup>
-                                    <label>Film Name</label>
-                                    <InputField
-                                        type="text"
-                                        value={filmInfor.name}
-                                        onChange={(e) => setFilmInfor({ ...filmInfor, name: e.target.value })}
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <label>Genres</label>
-                                    <GenresContainer>
-                                        {genresList.map((genre) => (
-                                            <GenreCheckbox key={genre._id}>
-                                                <input
-                                                    type="checkbox"
-                                                    checked={selectedGenres.includes(genre._id)}
-                                                    onChange={() => handleChange(genre._id)}
-                                                />
-                                                <span>{genre.name}</span>
-                                            </GenreCheckbox>
-                                        ))}
-                                    </GenresContainer>
-                                </FormGroup>
-                                <FormGroup>
-                                    <label>Film Country</label>
-                                    <InputField
-                                        type="text"
-                                        value={filmInfor.country}
-                                        onChange={(e) => setFilmInfor({ ...filmInfor, country: e.target.value })}
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <label>Film Actor</label>
-                                    <InputField
-                                        type="text"
-                                        value={filmInfor.actors}
-                                        onChange={(e) => setFilmInfor({ ...filmInfor, actors: [e.target.value] })}
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <label>Film Director</label>
-                                    <InputField
-                                        type="text"
-                                        value={filmInfor.director}
-                                        onChange={(e) => setFilmInfor({ ...filmInfor, director: e.target.value })}
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <label>Film Status</label>
-                                    <SelectField
-                                        value={filmInfor.status}
-                                        onChange={(e) => setFilmInfor({ ...filmInfor, status: e.target.value })}
-                                    >
-                                        <option value="dang cap nhat">Đang cập nhật</option>
-                                        <option value="hoan thanh">Đã hoàn thành</option>
-                                    </SelectField>
-                                </FormGroup>
-                                <FormGroup>
-                                    <label>Film Poster</label>
-                                    <FileInput
-                                        type="file"
-                                        onChange={handleFileChange}
-                                    />
-                                    {posterPreview && (
-                                        <PosterPreview src={posterPreview} alt="Poster Preview" />
-                                    )}
-                                </FormGroup>
-                                <FormGroup>
-                                    <label>Film Description</label>
-                                    <InputField
-                                        type="text"
-                                        value={filmInfor.description}
-                                        onChange={(e) => setFilmInfor({ ...filmInfor, description: e.target.value })}
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <label>Total Chapters</label>
-                                    <InputField
-                                        type="text"
-                                        value={filmInfor.totalChap}
-                                        onChange={(e) => setFilmInfor({ ...filmInfor, totalChap: e.target.value })}
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <label>Movie Duration</label>
-                                    <InputField
-                                        type="text"
-                                        value={filmInfor.movieDuration}
-                                        onChange={(e) => setFilmInfor({ ...filmInfor, movieDuration: e.target.value })}
-                                    />
-                                </FormGroup>
-                                <ButtonGroup>
-                                    <SubmitButton type="submit">Create</SubmitButton>
-                                    <BackButton>
-                                        <a href="/filmsInfor">Back</a>
-                                    </BackButton>
-                                </ButtonGroup>
-                            </FilmForm>
-                        </FilmCreationCard>
-                    </>
+                    <FilmCreationCard>
+                        <h1>Create New Film</h1>
+                        <FilmForm onSubmit={handleSubmit}>
+                            <FormGroup>
+                                <label htmlFor="filmName">Film Name</label>
+                                <InputField
+                                    id="filmName"
+                                    type="text"
+                                    value={filmInfor.name}
+                                    onChange={(e) => setFilmInfor({ ...filmInfor, name: e.target.value })}
+                                />
+                            </FormGroup>
+
+                            <FormGroup>
+                                <label>Genres</label>
+                                <GenresContainer>
+                                    {genresList.map((genre) => (
+                                        <GenreCheckbox key={genre._id}>
+                                            <input
+                                                id={`genre-${genre._id}`}
+                                                type="checkbox"
+                                                checked={selectedGenres.includes(genre._id)}
+                                                onChange={() => handleChange(genre._id)}
+                                            />
+                                            <label htmlFor={`genre-${genre._id}`}>{genre.name}</label>
+                                        </GenreCheckbox>
+                                    ))}
+                                </GenresContainer>
+                            </FormGroup>
+
+                            <FormGroup>
+                                <label htmlFor="filmCountry">Film Country</label>
+                                <InputField
+                                    id="filmCountry"
+                                    type="text"
+                                    value={filmInfor.country}
+                                    onChange={(e) => setFilmInfor({ ...filmInfor, country: e.target.value })}
+                                />
+                            </FormGroup>
+
+                            <FormGroup>
+                                <label htmlFor="filmActor">Film Actor</label>
+                                <InputField
+                                    id="filmActor"
+                                    type="text"
+                                    value={filmInfor.actors}
+                                    onChange={(e) => setFilmInfor({ ...filmInfor, actors: [e.target.value] })}
+                                />
+                            </FormGroup>
+
+                            <FormGroup>
+                                <label htmlFor="filmDirector">Film Director</label>
+                                <InputField
+                                    id="filmDirector"
+                                    type="text"
+                                    value={filmInfor.director}
+                                    onChange={(e) => setFilmInfor({ ...filmInfor, director: e.target.value })}
+                                />
+                            </FormGroup>
+
+                            <FormGroup>
+                                <label htmlFor="filmStatus">Film Status</label>
+                                <SelectField
+                                    id="filmStatus"
+                                    value={filmInfor.status}
+                                    onChange={(e) => setFilmInfor({ ...filmInfor, status: e.target.value })}
+                                >
+                                    <option value="dang cap nhat">Đang cập nhật</option>
+                                    <option value="hoan thanh">Đã hoàn thành</option>
+                                </SelectField>
+                            </FormGroup>
+
+                            <FormGroup>
+                                <label htmlFor="filmPoster">Film Poster</label>
+                                <FileInput
+                                    id="filmPoster"
+                                    type="file"
+                                    onChange={handleFileChange}
+                                />
+                                {posterPreview && (
+                                    <PosterPreview src={posterPreview} alt="Poster Preview" />
+                                )}
+                            </FormGroup>
+
+                            <FormGroup>
+                                <label htmlFor="filmDescription">Film Description</label>
+                                <InputField
+                                    id="filmDescription"
+                                    type="text"
+                                    value={filmInfor.description}
+                                    onChange={(e) => setFilmInfor({ ...filmInfor, description: e.target.value })}
+                                />
+                            </FormGroup>
+
+                            <FormGroup>
+                                <label htmlFor="totalChapters">Total Chapters</label>
+                                <InputField
+                                    id="totalChapters"
+                                    type="text"
+                                    value={filmInfor.totalChap}
+                                    onChange={(e) => setFilmInfor({ ...filmInfor, totalChap: e.target.value })}
+                                />
+                            </FormGroup>
+
+                            <FormGroup>
+                                <label htmlFor="movieDuration">Movie Duration</label>
+                                <InputField
+                                    id="movieDuration"
+                                    type="text"
+                                    value={filmInfor.movieDuration}
+                                    onChange={(e) => setFilmInfor({ ...filmInfor, movieDuration: e.target.value })}
+                                />
+                            </FormGroup>
+
+                            <ButtonGroup>
+                                <SubmitButton type="submit">Create</SubmitButton>
+                                <BackButton>
+                                    <a href="/filmsInfor">Back</a>
+                                </BackButton>
+                            </ButtonGroup>
+                        </FilmForm>
+                    </FilmCreationCard>
                 ) : (
                     <DenyAccess />
                 )}
