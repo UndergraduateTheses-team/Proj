@@ -60,7 +60,7 @@ jobs:
       - name: Update permission
         run: |
              chmod -R 777 FE-Server/build/*
-             chmod -R 777 Meida-Server/
+             chmod -R 777 Media-Server/
              chmod -R 777 API-Server/
       - name: Deploy to fe (Copy Build Files)
         run: |
