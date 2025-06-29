@@ -81,9 +81,6 @@ jobs:
       - name: Upload GitHub Action workflows logs to elastic
         uses: knutfr/github-actions-to-elk@v1.0.4
         with:
-          githubOrg: "UndergraduteTheses-team"
-          githubRepository: "Proj"
-          githubRunId: "${{ github.run_id }}"
           elasticHost: "${{ secrets.ELASTIC_HOST }}"
           elasticApiKeyId: "${{ secrets.ELASTIC_KEY_ID }}"
           elasticApiKey: "${{ secrets.ELASTIC_API_KEY }}"
