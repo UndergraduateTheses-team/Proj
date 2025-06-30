@@ -1,7 +1,4 @@
 name: log to ES
-permissions:
-  actions: read
-  contents: read
 on: 
   push:
     branches:
