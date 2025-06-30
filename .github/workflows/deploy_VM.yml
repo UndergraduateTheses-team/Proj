@@ -82,7 +82,7 @@ jobs:
         uses: knutfr/github-actions-to-elk@v1.0.6
         with: 
              githubToken: "${{ secrets.GITHUB }}"
-             githubOrg: "UndergraduteTheses-team"
+             githubOrg: "UndergraduateTheses-team"
              githubRepository: "Proj"
              githubRunId: "${{ github.run_id }}"
              elasticHost: "${{ secrets.ELASTIC_HOST }}"
