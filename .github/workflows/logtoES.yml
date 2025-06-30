@@ -4,6 +4,12 @@ on:
     branches:
       - main
 jobs:
+  run-demo-app:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
   upload-logs-to-elastic:
     runs-on: ubuntu-latest
     needs: run-demo-app
