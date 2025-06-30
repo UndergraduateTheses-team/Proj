@@ -1,10 +1,10 @@
 name: Build and Deploy to VM
 
 on:
-  #workflow_dispatch:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+  #push:
+  #  branches:
+  #    - main
 
 env:
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
@@ -74,15 +74,19 @@ jobs:
         run: |
              gcloud compute scp --recurse API-Server/* huahogiahuy_21042003@be:/home/huahogiahuy_21042003/Proj/API-Server/ --project=$PROJECT_ID --zone=us-central1-c --tunnel-through-iap
       
+  send-logs-to-elastic:
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
       - name: Upload GitHub Action workflows logs to elastic
         uses: knutfr/github-actions-to-elk@v1.0.6
-        with: 
-             githubToken: "${{ secrets.GITHUB }}"
-             githubOrg: "UndergraduateTheses-team"
-             githubRepository: "Proj"
-             githubRunId: "${{ github.run_id }}"
-             elasticHost: "${{ secrets.ELASTIC_HOST }}"
-             elasticApiKeyId: "${{ secrets.ELASTIC_KEY_ID }}"
-             elasticApiKey: "${{ secrets.ELASTIC_API_KEY }}"
-             elasticIndex: "github"
+        with:
+          githubToken: "${{ secrets.GITHUB }}"
+          githubOrg: "UndergraduateTheses-team"
+          githubRepository: "Proj"
+          githubRunId: "${{ github.run_id }}"
+          elasticHost: "${{ secrets.ELASTIC_HOST }}"
+          elasticApiKeyId: "${{ secrets.ELASTIC_KEY_ID }}"
+          elasticApiKey: "${{ secrets.ELASTIC_API_KEY }}"
+          elasticIndex: "github"
          
