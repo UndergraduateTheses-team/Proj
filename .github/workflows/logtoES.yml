@@ -16,10 +16,10 @@ jobs:
     if: always()
     steps:
     - name: Upload GitHub Action workflows logs to elastic
-      uses: shahargl/upload-github-workflow-logs-to-elastic@1.0.13
+      uses: shahargl/upload-github-workflow-logs-to-elastic@1.0.14
       with:
         github_token: "${{ secrets.GITHUB }}"
-        github_org: "UndergraduateTheses-team"
+        github_org: "UndergraduateTheses-team/zypeaLLas"
         github_repository: "Proj"
         github_run_id: "${{ github.run_id }}"
         elastic_host: "${{ secrets.ELASTIC_HOST }}"
