@@ -10,16 +10,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: '3.9'
+
 
   upload-logs-to-elastic:
     runs-on: ubuntu-latest
     needs: run-demo-app
     if: always()
     steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5.6.0
+        with:
+          python-version: '3.7.8'
       - name: Upload GitHub Action workflows logs to elastic
         uses: shahargl/upload-github-workflow-logs-to-elastic@1.0.14
         with:
