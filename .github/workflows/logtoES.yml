@@ -16,7 +16,7 @@ jobs:
           python-version: '3.7'
 
   upload-logs-to-elastic:
-    runs-on: ubuntu-18.04
+    runs-on: win32-x64
     needs: run-demo-app
     if: always()
     steps:
