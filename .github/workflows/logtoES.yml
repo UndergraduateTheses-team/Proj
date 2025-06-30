@@ -4,17 +4,20 @@ on:
     branches:
       - main
 jobs:
+
   send-logs-to-elastic:
     runs-on: ubuntu-latest
     if: always()
     steps:
+      - name: Log GitHub Run ID
+        run: echo "GitHub Run ID: ${{ github.run_id }}"
       - name: Upload GitHub Action workflows logs to elastic
         uses: knutfr/github-actions-to-elk@v1.0.6
         with:
           githubToken: "${{ secrets.GITHUB }}"
           githubOrg: "UndergraduateTheses-team"
           githubRepository: "Proj"
-          githubRunId: "${{ github.run_id}}"
+          githubRunId: "15974551782"
           elasticHost: "${{ secrets.ELASTIC_HOST }}"
           elasticApiKeyId: "${{ secrets.ELASTIC_KEY_ID }}"
           elasticApiKey: "${{ secrets.ELASTIC_API_KEY }}"
