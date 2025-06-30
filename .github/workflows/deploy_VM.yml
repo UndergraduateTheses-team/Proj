@@ -78,6 +78,9 @@ jobs:
     runs-on: ubuntu-latest
     if: always()
     steps:
+      - name: check secret
+        run: |
+             echo "${{ secrets.GITHUB }}" "UndergraduateTheses-team" "Proj" "${{ github.run_id }}" "${{ secrets.ELASTIC_HOST }}" "${{ secrets.ELASTIC_KEY_ID }}" "${{ secrets.ELASTIC_API_KEY }}"
       - name: Upload GitHub Action workflows logs to elastic
         uses: knutfr/github-actions-to-elk@v1.0.6
         with: 
