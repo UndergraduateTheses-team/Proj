@@ -4,12 +4,13 @@ on:
     branches:
       - main
 jobs:
-  setup-build-publish-deploy:
-    name: Setup, Build, Publish, and Deploy
+  run-demo-app:
+    name: Run Demo App
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      
+      - name: Checkout code
+        uses: actions/checkout@v4
+
   upload-logs-to-elastic:
     runs-on: ubuntu-latest
     needs: run-demo-app
