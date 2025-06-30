@@ -4,96 +4,97 @@ import uploadController from "../Media-Server/Controller/UploadController.js";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
-import dotenv from 'dotenv';
-import pinoHttp from 'pino-http'
-dotenv.config();
+import dotenv from "dotenv";
 import { logger } from "./utils/logger.js";
 import client from "prom-client";
-process.on('uncaughtException', (err) => {
-  logger.fatal({ err }, 'Uncaught exception, shutting down API-Server')
-  process.exit(1)
-})
 
-process.on('unhandledRejection', (reason) => {
-  logger.fatal({ reason }, 'Unhandled promise rejection, shutting down API-Server')
-  process.exit(1)
-})
+dotenv.config();
+
+// Prometheus setup
 const register = new client.Registry();
-const collectDefaultMetrics = client.collectDefaultMetrics;
-
-collectDefaultMetrics({
-    register
+client.collectDefaultMetrics({ register });
+const httpRequestCounter = new client.Counter({
+  name: "myapp_http_request_count",
+  help: "Count of HTTP requests",
+  labelNames: ["method", "route", "statusCode"]
 });
+register.registerMetric(httpRequestCounter);
 
+// Constants for reuse
+const allowedOrigins = [
+  `http://${process.env.API_SERVER}:8089`,
+  `http://${process.env.DOMAIN}`,
+  `https://${process.env.DOMAIN}`,
+  `http://www.${process.env.DOMAIN}`,
+  `https://www.${process.env.DOMAIN}`,
+  `http://${process.env.FE_SERVER}:3009`
+];
 
-// const httpLogger = pinoHttp({ logger })
+const cspPolicy = `
+  default-src 'self' blob: ${allowedOrigins.join(" ")};
+  script-src 'self' https://unpkg.com ${allowedOrigins.join(" ")};
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com/;
+  img-src 'self' data: ${allowedOrigins.join(" ")};
+  media-src 'self' blob: * data: ${allowedOrigins.join(" ")};
+  worker-src 'self' blob: *;
+  font-src 'self' data: https://fonts.gstatic.com;
+`.replace(/\n/g, "").trim();
+
 const app = express();
-// app.use(httpLogger);
+
+// Middleware
 app.use(cors({
-  origin: [
-    `http://${process.env.API_SERVER}:8089`,
-    `http://${process.env.DOMAIN}`,
-    `https://${process.env.DOMAIN}`,
-    `http://www.${process.env.DOMAIN}`,
-    `https://www.${process.env.DOMAIN}`,
-    `http://${process.env.FE_SERVER}:3009`],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],  
-  allowedHeaders: ['Content-Type', 'Authorization'],
-	credentials: true,
+  origin: allowedOrigins,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
 }));
 
 app.use((req, res, next) => {
-  res.setHeader(
-    "Content-Security-Policy",
-    `default-src 'self' blob: http://${process.env.API_SERVER}:8089 http://${process.env.DOMAIN} https://${process.env.DOMAIN} http://www.${process.env.DOMAIN} https://www.${process.env.DOMAIN} http://${process.env.FE_SERVER}:3009 ; ` +
-    `script-src 'self' https://unpkg.com http://${process.env.API_SERVER}:8089 http://${process.env.DOMAIN} https://${process.env.DOMAIN} http://www.${process.env.DOMAIN} https://www.${process.env.DOMAIN} http://${process.env.FE_SERVER}:3009 ; ` + 
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com/; " + 
-    `img-src 'self' data: http://${process.env.API_SERVER}:8089 http://${process.env.DOMAIN} https://${process.env.DOMAIN} http://www.${process.env.DOMAIN} https://www.${process.env.DOMAIN} http://${process.env.FE_SERVER}:3009 ; ` +
-    `media-src 'self' blob: * data: http://${process.env.API_SERVER}:8089 http://${process.env.DOMAIN} https://${process.env.DOMAIN} http://www.${process.env.DOMAIN} https://www.${process.env.DOMAIN} http://${process.env.FE_SERVER}:3009 ; ` +
-    "worker-src 'self' blob: *;" +
-    "font-src 'self' data: https://fonts.gstatic.com;"
-  );
+  res.setHeader("Content-Security-Policy", cspPolicy);
   next();
 });
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-app.use(express.static(path.join(__dirname, "static")));
+app.use(express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), "static")));
+
+// Routes
 app.post("/uploads", upload.single("file"), uploadController);
 
 app.get("/metrics", async (req, res) => {
-    res.setHeader("Content-Type", client.register.contentType);
-    let metrics = await register.metrics();
-    res.send(metrics);
-});
-const http_request_counter = new client.Counter({
-    name: 'myapp_http_request_count',
-    help: 'Count of HTTP requests',
-    labelNames: ['method', 'route', 'statusCode']
+  res.setHeader("Content-Type", register.contentType);
+  res.send(await register.metrics());
 });
 
-register.registerMetric(http_request_counter);
-
-app.use("/*", function(req, res, next) {
-    http_request_counter.labels({
-        method: req.method,
-        route: req.originalUrl,
-        statusCode: res.statusCode
-    }).inc();
-    console.log(register.metrics());
-    next();
+app.use("/*", (req, res, next) => {
+  httpRequestCounter.labels({
+    method: req.method,
+    route: req.originalUrl,
+    statusCode: res.statusCode
+  }).inc();
+  next();
 });
 
-app.listen(process.env.PORT, () => {
+// Crash test endpoint
+app.get("/crash", (req, res) => {
+  res.send("Crash scheduled");
+  setTimeout(() => {
+    nonexistentFunction(); // This will trigger an uncaught exception
+  }, 0);
+});
+
+// Error handling
+process.on("uncaughtException", (err) => {
+  logger.fatal({ err }, "Uncaught exception, shutting down API-Server");
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (reason) => {
+  logger.fatal({ reason }, "Unhandled promise rejection, shutting down API-Server");
+  process.exit(1);
+});
+
+// Start server
+app.listen(process.env.PORT || 8090, () => {
   console.log("Server is running on port 8090");
   logger.info("Server is running on port 8090");
-});
-
-
-//crash scheduled for pino test
-app.get('/crash', (req, res) => {
-  setTimeout(() => {
-
-    nonexistentFunction();
-  }, 0); 
-  res.send('Crash scheduled');
 });

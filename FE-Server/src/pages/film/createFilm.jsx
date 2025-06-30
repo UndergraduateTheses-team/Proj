@@ -200,6 +200,8 @@ function CreateFilmPage() {
 
 export default CreateFilmPage;
 
+// Styled components below
+
 const CinematicContainer = styled.div`
     background: linear-gradient(to bottom, #1a1a2e, #16213e);
     min-height: 100vh;

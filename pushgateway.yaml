@@ -13,12 +13,17 @@ spec:
       labels:
         app: pushgateway
     spec:
+      automountServiceAccountToken: false  # Disable default service account mounting
       containers:
-      - name: pushgateway
-        image: prom/pushgateway:latest
-        ports:
-        - containerPort: 9091
-
+        - name: pushgateway
+          image: prom/pushgateway:latest
+          ports:
+            - containerPort: 9091
+          resources:
+            limits:
+              memory: 256Mi
+            requests:
+              memory: 128Mi
 ---
 apiVersion: v1
 kind: Service
@@ -33,4 +38,3 @@ spec:
       nodePort: 30320  
   selector:
     app: pushgateway
-
