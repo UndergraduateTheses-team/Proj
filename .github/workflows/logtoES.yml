@@ -13,7 +13,7 @@ jobs:
         run: |
           echo "GitHub Run ID: ${{ github.run_id }}"
       - name: Upload GitHub Action workflows logs to elastic
-        uses: knutfr/github-actions-to-elk@v1.0.4
+        uses: knutfr/github-actions-to-elk@v1.0.6
         with:
 
           githubOrg: "UndergraduateTheses-team"
