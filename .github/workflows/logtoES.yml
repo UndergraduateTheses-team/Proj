@@ -6,7 +6,7 @@ on:
 jobs:
   run-demo-app:
     name: Run Demo App
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -16,7 +16,7 @@ jobs:
           python-version: '3.7.8'
 
   upload-logs-to-elastic:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: run-demo-app
     if: always()
     steps:
