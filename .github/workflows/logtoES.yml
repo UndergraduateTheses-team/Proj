@@ -15,7 +15,7 @@ jobs:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           githubOrg: UndergraduateTheses-team
           githubRepository: Proj
-          githubRunId: "15957499259"
+          githubRunId: "${{ github.run_id }}"
           elasticHost: "${{ secrets.ELASTIC_HOST }}"
           elasticApiKeyId: "${{ secrets.ELASTIC_KEY_ID }}"
           elasticApiKey: "${{ secrets.ELASTIC_API_KEY }}"
