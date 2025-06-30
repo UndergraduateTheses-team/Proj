@@ -1,4 +1,7 @@
 name: log to ES
+permissions:
+        actions: read
+        contents: read
 on: 
   push:
     branches:
@@ -7,6 +10,7 @@ jobs:
   send-logs-to-elastic:
     runs-on: ubuntu-latest
     if: always()
+    
     steps:
       - name: Upload GitHub Action workflows logs to elastic
         uses: knutfr/github-actions-to-elk@v1.0.6
@@ -14,7 +18,7 @@ jobs:
           githubToken: "${{ secrets.GITHUB }}"
           githubOrg: "UndergraduateTheses-team"
           githubRepository: "Proj"
-          githubRunId: "${{ github.run_id }}"
+          githubRunId: "${{ github.event.workflow_run.id }}"
           elasticHost: "${{ secrets.ELASTIC_HOST }}"
           elasticApiKeyId: "${{ secrets.ELASTIC_KEY_ID }}"
           elasticApiKey: "${{ secrets.ELASTIC_API_KEY }}"
