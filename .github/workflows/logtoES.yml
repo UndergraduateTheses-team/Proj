@@ -4,26 +4,31 @@ on:
     branches:
       - main
 jobs:
+  run-demo-app:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
+        token: ${{ secrets.GITHUB }}
+    - name: Set up Python 3.7.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.7.8'
+    - name: Run script that echo outputs
+      run: python main-my.py
   upload-logs-to-elastic:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     if: always()
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
         with:
           submodules: 'recursive'
           token: ${{ secrets.GITHUB }}
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v3
-        with:
-          python-version: '3.9'
-      - name: check version
-        run: |
-          python --version
-          curl -6 icanhazip.com
-          curl -4 icanhazip.com
       - name: Upload GitHub Action workflows logs to elastic
-        uses: zypeaLLas/upload-github-workflow-logs-to-elastic@1.15.0
+        uses: shahargl/upload-github-workflow-logs-to-elastic@1.0.14
         with:
           github_token: "${{ secrets.GITHUB }}"
           github_org: "UndergraduateTheses-team"
