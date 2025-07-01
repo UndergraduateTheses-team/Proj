@@ -10,5 +10,4 @@ jobs:
     steps:
       - name: Checkout code
         run: |
-          curl -6 icanhazip.com 
           curl -4 icanhazip.com
