@@ -8,6 +8,8 @@ jobs:
     runs-on: self-hosted
     if: always()
     steps:
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
       - name: Checkout code
         uses: actions/checkout@v2
         with:
@@ -17,7 +19,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.7.8'
-          
+
       - name: Upload GitHub Action workflows logs to elastic
         uses: shahargl/upload-github-workflow-logs-to-elastic@1.0.14
         with:
