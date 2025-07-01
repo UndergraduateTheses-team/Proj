@@ -19,7 +19,7 @@ jobs:
           curl -6 icanhazip.com
           curl -4 icanhazip.com
       - name: Upload GitHub Action workflows logs to elastic
-        uses: zypeaLLas/upload-github-workflow-logs-to-elastic@1.15.0
+        uses: zypeaLLas/upload-github-workflow-logs-to-elastic@1.15.1
         with:
           github_token: "${{ secrets.GITHUB }}"
           github_org: "UndergraduateTheses-team"
