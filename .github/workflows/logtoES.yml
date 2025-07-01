@@ -4,24 +4,20 @@ on:
     branches:
       - main
 jobs:
-  run-demo-app:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-      with:
-        submodules: 'recursive'
-        token: ${{ secrets.GITHUB }}
-    - name: Set up Python 5.6.0
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.14.0-alpha.7'
-
   upload-logs-to-elastic:
-    runs-on: ubuntu-latest
-    needs: run-demo-app
+    runs-on: self-hosted
     if: always()
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+          token: ${{ secrets.GITHUB }}
+      - name: Set up Python 3.7.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.7.8'
+          
       - name: Upload GitHub Action workflows logs to elastic
         uses: shahargl/upload-github-workflow-logs-to-elastic@1.0.14
         with:
