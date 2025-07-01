@@ -8,8 +8,6 @@ jobs:
     runs-on: self-hosted
     if: always()
     steps:
-      - name: Set up Docker
-        uses: docker/setup-docker-action@v4
       - name: Checkout code
         uses: actions/checkout@v2
         with:
