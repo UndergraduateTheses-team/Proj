@@ -4,19 +4,28 @@ on:
     branches:
       - main
 jobs:
-  send-logs-to-elastic:
-    runs-on: ubuntu-latest
+  upload-logs-to-elastic:
+    runs-on: self-hosted
     if: always()
-    
     steps:
-      - name: Upload GitHub Action workflows logs to elastic
-        uses: knutfr/github-actions-to-elk@v1.0.6
+      - name: Checkout code
+        uses: actions/checkout@v2
         with:
-          githubToken: "${{ secrets.GITHUB_TOKEN }}"
-          githubOrg: "UndergraduateTheses-team"
-          githubRepository: "Proj"
-          githubRunId: "15957499259"
-          elasticHost: "${{ secrets.ELASTIC_HOST }}"
-          elasticApiKeyId: "${{ secrets.ELASTIC_KEY_ID }}"
-          elasticApiKey: "${{ secrets.ELASTIC_API_KEY }}"
-          elasticIndex: "github"
+          submodules: 'recursive'
+          token: ${{ secrets.GITHUB }}
+      - name: Set up Python 3.7.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.7.8'
+
+      - name: Upload GitHub Action workflows logs to elastic
+        uses: shahargl/upload-github-workflow-logs-to-elastic@1.0.14
+        with:
+          github_token: "${{ secrets.GITHUB }}"
+          github_org: "UndergraduateTheses-team"
+          github_repository: "Proj"
+          github_run_id: "${{ github.run_id }}"
+          elastic_host: "${{ secrets.ELASTIC_HOST }}"
+          elastic_api_key_id: "${{ secrets.ELASTIC_KEY_ID }}"
+          elastic_api_key: "${{ secrets.ELASTIC_API_KEY }}"
+          elastic_index: "ci-cd"
