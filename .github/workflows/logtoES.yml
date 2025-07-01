@@ -13,9 +13,8 @@ jobs:
         with:
           submodules: 'recursive'
           token: ${{ secrets.GITHUB }}
-      - name: check version
+      - name: check connection IPv6
         run: |
-          python --version
           curl -6 icanhazip.com
           curl -4 icanhazip.com
       - name: Upload GitHub Action workflows logs to elastic
