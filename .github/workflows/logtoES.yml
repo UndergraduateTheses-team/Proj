@@ -21,7 +21,7 @@ jobs:
         run: |
           python --version
       - name: Upload GitHub Action workflows logs to elastic
-        uses: shahargl/upload-github-workflow-logs-to-elastic@1.0.13
+        uses: shahargl/upload-github-workflow-logs-to-elastic@1.0.12
         with:
           github_token: "${{ secrets.GITHUB }}"
           github_org: "UndergraduateTheses-team"
