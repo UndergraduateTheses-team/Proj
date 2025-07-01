@@ -12,21 +12,16 @@ jobs:
       with:
         submodules: 'recursive'
         token: ${{ secrets.GITHUB }}
-    - name: Set up Python 3.7.8
+    - name: Set up Python 3.9
       uses: actions/setup-python@v2
       with:
-        python-version: '3.7.8'
+        python-version: '3.9'
     - name: Run script that echo outputs
       run: python main-my.py
   upload-logs-to-elastic:
     runs-on: ubuntu-latest
     if: always()
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          submodules: 'recursive'
-          token: ${{ secrets.GITHUB }}
       - name: Upload GitHub Action workflows logs to elastic
         uses: shahargl/upload-github-workflow-logs-to-elastic@1.0.14
         with:
