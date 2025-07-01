@@ -9,7 +9,7 @@ jobs:
     if: always()
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           submodules: 'recursive'
           token: ${{ secrets.GITHUB }}
@@ -17,9 +17,8 @@ jobs:
         run: |
           curl -6 icanhazip.com
           curl -4 icanhazip.com
-      - name: ES ping
-        run: curl -u elastic:User123@ -v --fail "${{ secrets.ELASTIC_HOST }}/_cluster/health?pretty"
-        
+          whoami
+
       - name: Upload GitHub Action workflows logs to elastic
         uses: zypeaLLas/upload-github-workflow-logs-to-elastic@1.15.2
         with:
