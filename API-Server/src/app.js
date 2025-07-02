@@ -10,7 +10,6 @@ import pinoHttp from "pino-http";
 import { logger } from "../utils/logger.js";
 import { startDiskMonitor } from "../utils/checkdisk.js";
 import client from "prom-client";
-import { exec } from "child_process"
 dotenv.config();
 
 // Prometheus setup
@@ -105,25 +104,11 @@ app.listen(process.env.PORT || 8089, () => {
 process.on('uncaughtException', (err) => {
   logger.fatal({ err }, "Uncaught exception, shutting down API-Server");
   
-  exec('process.env.RESTART_SERVICE', (error, stdout, stderr) => {
-    if (error) {
-      console.error(`exec error: ${error}`);
-      return;
-    }
-  });
-  
   process.exit(1);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
   logger.fatal({ reason }, "Unhandled promise rejection, shutting down API-Server");
-  
-  exec('process.env.RESTART_SERVICE', (error, stdout, stderr) => {
-    if (error) {
-      console.error(`exec error: ${error}`);
-      return;
-    }
-  });
   
   process.exit(1);
 });
