@@ -1,10 +1,10 @@
 name: SonarQube Scan
 
 on:
-  workflow_dispatch:
-  # push:
-  #   branches:
-  #     - main
+  # workflow_dispatch:
+  push:
+    branches:
+      - main
   # pull_request:
   #   types: [opened, synchronize, reopened]
 jobs:
@@ -37,7 +37,7 @@ jobs:
           whoami
 
       - name: Forward Actions workflows logs to Elastic
-        uses: zypeaLLas/upload-github-workflow-logs-to-elastic@1.16
+        uses: zypeaLLas/upload-github-workflow-logs-to-elastic@1.0.0
         with:
           github_token: "${{ secrets.GITHUB }}"
           github_org: "UndergraduateTheses-team"

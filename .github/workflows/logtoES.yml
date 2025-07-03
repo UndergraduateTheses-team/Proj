@@ -1,9 +1,9 @@
 name: log to ES
 on: 
-  # workflow_dispatch:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - main
 jobs:
   upload-logs-to-elastic:
     runs-on: self-hosted
