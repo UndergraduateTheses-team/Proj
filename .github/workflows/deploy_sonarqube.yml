@@ -37,7 +37,7 @@ jobs:
           whoami
 
       - name: Forward Actions workflows logs to Elastic
-        uses: zypeaLLas/upload-github-workflow-logs-to-elastic@1.0.0
+        uses: zypeaLLas/upload-github-workflow-logs-to-elastic@1.0.2
         with:
           github_token: "${{ secrets.GITHUB }}"
           github_org: "UndergraduateTheses-team"
