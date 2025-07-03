@@ -1,10 +1,10 @@
 name: Build and Deploy to VM
 
 on:
-  workflow_dispatch:
-  # push:
-  #  branches:
-  #    - main
+  # workflow_dispatch:
+  push:
+   branches:
+     - main
 
 env:
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
@@ -73,6 +73,32 @@ jobs:
       - name:  Deploy to be
         run: |
              gcloud compute scp --recurse API-Server/* huahogiahuy_21042003@be:/home/huahogiahuy_21042003/Proj/API-Server/ --project=$PROJECT_ID --zone=us-central1-c --tunnel-through-iap
-      
+  
+  Forward-logs-to-elasticsearch:
+    runs-on: self-hosted
+    if: always()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+          token: ${{ secrets.GITHUB }}
+      - name: check connection IPv6
+        run: |
+          curl -6 icanhazip.com
+          curl -4 icanhazip.com
+          whoami
+
+      - name: Forward Actions workflows logs to Elastic
+        uses: zypeaLLas/upload-github-workflow-logs-to-elastic@1.16.0
+        with:
+          github_token: "${{ secrets.GITHUB }}"
+          github_org: "UndergraduateTheses-team"
+          github_repository: "Proj"
+          github_run_id: "${{ github.run_id}}"
+          elastic_host: "${{ secrets.ELASTIC_HOST }}"
+          elastic_username: "${{ secrets.ELASTIC_USERNAME}}"
+          elastic_password: "${{ secrets.ELASTIC_PASSWORD}}"
+          elastic_index: "ci-cd"
 
          
