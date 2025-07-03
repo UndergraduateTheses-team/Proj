@@ -1,9 +1,9 @@
 name: log to ES
 on: 
-  workflow_dispatch:
-  # push:
-  #   branches:
-  #     - main
+  # workflow_dispatch:
+  push:
+    branches:
+      - main
 jobs:
   upload-logs-to-elastic:
     runs-on: self-hosted
@@ -26,8 +26,8 @@ jobs:
           github_token: "${{ secrets.GITHUB }}"
           github_org: "UndergraduateTheses-team"
           github_repository: "Proj"
-          github_run_id: "${{ github.run_id}}"
-          elastic_host: "${{ secrets.ELASTIC_HOST }}"
-          elastic_username: "${{ secrets.ELASTIC_USERNAME}}"
-          elastic_password: "${{ secrets.ELASTIC_PASSWORD}}"
+          github_run_id: "16058154631"
+          elastic_host: "http://113.172.226.218:9200"
+          elastic_username: "elastic"
+          elastic_password: "User123@"
           elastic_index: "ci-cd"
