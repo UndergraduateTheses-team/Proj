@@ -76,6 +76,7 @@ jobs:
   
   Forward-logs-to-elasticsearch:
     runs-on: self-hosted
+    needs: setup-build-publish-deploy
     if: always()
     steps:
       - name: Checkout code

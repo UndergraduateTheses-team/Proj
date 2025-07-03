@@ -22,6 +22,7 @@ jobs:
 
   Forward-logs-to-elasticsearch:
     runs-on: self-hosted
+    needs: sonarqube
     if: always()
     steps:
       - name: Checkout code
