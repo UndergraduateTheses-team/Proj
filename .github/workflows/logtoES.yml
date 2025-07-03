@@ -28,6 +28,6 @@ jobs:
           github_repository: "Proj"
           github_run_id: "${{ github.run_id}}"
           elastic_host: "${{ secrets.ELASTIC_HOST }}"
-          elastic_api_key_id: "${{ secrets.ELASTIC_KEY_ID }}"
-          elastic_api_key: "${{ secrets.ELASTIC_API_KEY }}"
+          elastic_api_key_id: "7BF7z5cBBcWPx3m9JhqO"
+          elastic_api_key: "Xl0TpRuZQr66OFiwaZmE6g"
           elastic_index: "ci-cd"
