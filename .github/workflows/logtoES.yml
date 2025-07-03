@@ -6,7 +6,7 @@ on:
       - main
 jobs:
   upload-logs-to-elastic:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: always()
     steps:
       - name: Checkout code
@@ -16,18 +16,18 @@ jobs:
           token: ${{ secrets.GITHUB }}
       - name: check connection IPv6
         run: |
-          # curl -6 icanhazip.com
+          curl -6 icanhazip.com
           curl -4 icanhazip.com
           whoami
 
-      - name: Upload GitHub Action workflows logs to elastic
-        uses: zypeaLLas/upload-github-workflow-logs-to-elastic@1.15.2
+      - name: Forward Actions workflows logs to Elastic
+        uses: zypeaLLas/upload-github-workflow-logs-to-elastic@1.16.0
         with:
           github_token: "${{ secrets.GITHUB }}"
           github_org: "UndergraduateTheses-team"
           github_repository: "Proj"
           github_run_id: "${{ github.run_id}}"
           elastic_host: "${{ secrets.ELASTIC_HOST }}"
-          elastic_api_key_id: "7BF7z5cBBcWPx3m9JhqO"
-          elastic_api_key: "Xl0TpRuZQr66OFiwaZmE6g"
+          elastic_username: "${{ secrets.ELASTIC_USERNAME}}"
+          elastic_password: "${{ secrets.ELASTIC_PASSWORD}}"
           elastic_index: "ci-cd"
