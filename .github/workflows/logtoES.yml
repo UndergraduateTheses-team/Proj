@@ -6,7 +6,7 @@ on:
   #     - main
 jobs:
   upload-logs-to-elastic:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     if: always()
     steps:
       - name: Checkout code
